@@ -21,7 +21,7 @@ Get-AzureRmResourceProvider -ListAvailable | where{$_.ProviderNamespace -like "*
 # get images
 $pubName="Canonical" # "OpenLogic"
 $offerName="UbuntuServer" # "Centos"
-$sku="2016-Datacenter-with-Containers" # 
+$sku="16.04.0-LTS" # "7.3" # "2016-Datacenter-with-Containers"
 Get-AzureRmVMImageSku -Location eastus -Publisher $pubName -Offer $offerName
 Get-AzureRmVMImage -Location eastus -PublisherName $pubName -Offer $offerName -Skus $sku | select version
 
