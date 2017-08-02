@@ -4,7 +4,7 @@
 # get all operations #
 $ops = (Get-AzureRmProviderOperation -OperationSearchString */*).Operation
 
-# specifics
+# specifics (https://resource.azure.com)
 Get-AzureRmProviderOperation -OperationSearchString Microsoft.Cdn/* | Where { $_.Operation -like '*action' } | Format-Table 
 Invoke-AzureRmResourceAction -ResourceGroupName $rg -ResourceType 'Microsoft.Cdn/profiles/endpoints' -ResourceName $ProfileName/$EndpointName `
     -ApiVersion '2015-06-01' -Action 'Purge' -Parameters @{ ContentPaths = '/*' } -Force
