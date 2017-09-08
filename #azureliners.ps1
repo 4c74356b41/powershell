@@ -1,7 +1,7 @@
 # get provider api-versions
 (Get-AzureRmResourceProvider -ProviderNamespace 'Microsoft.Insights').ResourceTypes | FT ResourceTypeName, ApiVersions
 
-# get all operations #
+# get all operations
 $ops = (Get-AzureRmProviderOperation -OperationSearchString */*).Operation
 
 # specifics (https://resource.azure.com)
@@ -17,13 +17,6 @@ $status = $rawStatusMessage.Content.statusMessage | ConvertFrom-Json
 # providerz
 Get-AzureRmResourceProvider -ListAvailable | select ProviderNamespace
 Get-AzureRmResourceProvider -ListAvailable | where{$_.ProviderNamespace -like "*compute"} | foreach-object{Register-AzureRmResourceProvider -ProviderNamespace $_.ProviderNamespace}
-
-# get images
-$pubName="Canonical" # "OpenLogic"
-$offerName="UbuntuServer" # "Centos"
-$sku="16.04.0-LTS" # "7.3" # "2016-Datacenter-with-Containers"
-Get-AzureRmVMImageSku -Location eastus -Publisher $pubName -Offer $offerName
-Get-AzureRmVMImage -Location eastus -PublisherName $pubName -Offer $offerName -Skus $sku | select version
 
 # new role
 $role = Get-AzureRmRoleDefinition "Virtual Machine Contributor"
