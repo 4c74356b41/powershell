@@ -21,10 +21,10 @@ function get-image {
         [string]$sku
     )
     if ($sku) {
-        Get-AzureRmVMImage -Location eastus -PublisherName $pubName -Offer $offerName -Skus $sku | select version
+        Get-AzureRmVMImage -Location eastus -PublisherName $pub -Offer $offer -Skus $sku | select version
     }
     else {
-        Get-AzureRmVMImageSku -Location eastus -Publisher $pubName -Offer $offerName
+        Get-AzureRmVMImageSku -Location eastus -Publisher $pub -Offer $offer
     }
 }
 
