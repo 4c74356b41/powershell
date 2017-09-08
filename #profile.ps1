@@ -14,6 +14,20 @@ function develop-me {
 	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
 }
 
+function get-image {
+	Param(
+        [string]$pub,
+        [string]$offer,
+        [string]$sku
+    )
+    if ($sku) {
+        Get-AzureRmVMImage -Location eastus -PublisherName $pubName -Offer $offerName -Skus $sku | select version
+    }
+    else {
+        Get-AzureRmVMImageSku -Location eastus -Publisher $pubName -Offer $offerName
+    }
+}
+
 function contribute-me {
     [CmdletBinding()]
     Param
