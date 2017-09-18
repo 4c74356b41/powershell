@@ -57,3 +57,8 @@ gci c:\_ -Filter * -Recurse | % {(gci $_.FullName | % {$_ -replace '',''}) | sc 
 
 #import mailboxes from folder
 gci something | % { New-MailboxImportRequest -Mailbox $($_ -replace ".{4}$") -FilePath $_.FullName -BadItemLimit 300 -LargeItemLimit 50 -AcceptLargeDataLoss }
+
+#nat switch
+New-VMSwitch -SwitchName “NATSwitch” -SwitchType Internal
+New-NetIPAddress -IPAddress 192.168.0.1 -PrefixLength 24 -InterfaceAlias “vEthernet (NATSwitch)”
+New-NetNAT -Name “NATNetwork” -InternalIPInterfaceAddressPrefix 192.168.0.0/24
