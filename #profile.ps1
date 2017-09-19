@@ -14,6 +14,22 @@ function develop-me {
 	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
 }
 
+function git-me {
+	git config --global user.email "4c74356b41@outlook.com"
+	git config --global user.name "Gleb Boushev"
+}
+
+function share-me {
+	Param(
+	[string]$storageName,
+	[string]$storagePass
+	)
+	$acctKey = ConvertTo-SecureString -String $storagePass -AsPlainText -Force
+	$credential = New-Object System.Management.Automation.PSCredential -ArgumentList "Azure\$storageName", $acctKey
+	New-PSDrive -Name z -PSProvider FileSystem -Root "\\$storageName.file.core.windows.net\bylya" -Credential $credential -Persist
+	New-PSDrive -Name x -PSProvider FileSystem -Root "\\$storageName.file.core.windows.net\nebylya" -Credential $credential -Persist
+}
+
 function get-image {
 	Param(
         [string]$pub,
