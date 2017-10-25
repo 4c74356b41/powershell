@@ -104,5 +104,9 @@ $msdn = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMSDN).secretvaluetex
 $mvp = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMVP).secretvaluetext
 $mct = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMCT).secretvaluetext
 
-cd b:\bb
+cd \
 cls 
+
+# PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+# PATH="$PATH:/mnt/c/Program\ Files/Docker/Docker/resources/bin"
+# alias docker="docker.exe"
