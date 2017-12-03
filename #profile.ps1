@@ -14,6 +14,15 @@ function develop-me {
 	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
 }
 
+function docker-me {
+  Param(
+  [string]$image='dops',
+  [string]$mappotaDep='B:\bb\azure\deployment:/home/deployment',
+  [string]$mappotaOut='B:\bb\_envs:/etc/ansible/output'
+  )
+  docker run -it —rm -v $mappotaDep -v $mappotaOut -e "AZURE_CLIENT_ID="$env:AZURE_CLIENT_ID"" -e "AZURE_SECRET="$env:AZURE_CLIENT_SECRET"" -e "AZURE_SUBSCRIPTION_ID="$MSDN"" -e "AZURE_TENANT="$env:AZURE_TENANT_ID"" $image
+}
+
 function misc-me {
 	git config --global user.email "4c74356b41@outlook.com"
 	git config --global user.name "Gleb Boushev"
