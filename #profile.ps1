@@ -1,17 +1,10 @@
-# function develop-me {
-# 	Param()
-# 	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
-# 	$whbody  = @{ tada = ((iwr httpbin.org/ip).content | convertfrom-json).origin } | ConvertTo-Json
-# 	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
-# }
-    
-    function token-me() {
-        $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-        $currentAzureContext = Get-AzureRmContext
-        $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azureRmProfile)
-        $token = $profileClient.AcquireAccessToken($currentAzureContext.Subscription.TenantId)
-        $token.AccessToken
-    }
+function token-me() {
+    $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+    $currentAzureContext = Get-AzureRmContext
+    $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azureRmProfile)
+    $token = $profileClient.AcquireAccessToken($currentAzureContext.Subscription.TenantId)
+    $token.AccessToken
+}
 
 function docker-me {
     Param(
