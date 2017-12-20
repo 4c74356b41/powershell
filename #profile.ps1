@@ -1,18 +1,17 @@
-function token-me {
-	Param()
-	$azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-	$currentAzureContext = Get-AzureRmContext
-	$profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azureRmProfile)
-	$token = $profileClient.AcquireAccessToken($currentAzureContext.Subscription.TenantId)
-	$token.AccessToken
-}
-
-function develop-me {
-	Param()
-	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
-	$whbody  = @{ tada = ((iwr httpbin.org/ip).content | convertfrom-json).origin } | ConvertTo-Json
-	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
-}
+# function develop-me {
+# 	Param()
+# 	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
+# 	$whbody  = @{ tada = ((iwr httpbin.org/ip).content | convertfrom-json).origin } | ConvertTo-Json
+# 	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
+# }
+    
+    function token-me() {
+        $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+        $currentAzureContext = Get-AzureRmContext
+        $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azureRmProfile)
+        $token = $profileClient.AcquireAccessToken($currentAzureContext.Subscription.TenantId)
+        $token.AccessToken
+    }
 
 function docker-me {
     Param(
@@ -30,7 +29,7 @@ function docker-me {
     iex $invoke
 }
 
-function misc-me {
+function misc-me() {
 	git config --global user.email "4c74356b41@outlook.com"
 	git config --global user.name "Gleb Boushev"
 	"https://docs.microsoft.com/en-us/azure/storage/files/storage-how-to-use-files-windows"
@@ -52,8 +51,7 @@ function get-image {
 
 function contribute-me {
     [CmdletBinding()]
-    Param
-    (
+    Param(
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [validateset('Article', 'Blog Site Posts', 'Book (Author)', 'Book (Co-Author)', 'Sample Project/Tools', 'Sample Code', 'Conference (booth presenter)', 'Conference (organizer)', 'Forum Moderator', 'Forum Participation (3rd Party forums)', 'Forum Participation (Microsoft Forums)', 'Mentorship', 'Open Source Project(s)', 'Other', 'Product Group Feedback (General)', 'Site Owner', 'Speaking (Conference)', 'Speaking (Local)', 'Speaking (User group)', 'Technical Social Media (Twitter, Facebook, LinkedIn...)', 'Translation Review, Feedback and Editing', 'User Group Owner', 'Video', 'Webcast', 'WebSite Posts')]
         [string]$contribution,
@@ -102,27 +100,21 @@ function contribute-me {
     New-MVPContribution @splat
 }
 
-function secret-me {
-	Param()
+function secret-me() {
 	[Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzureKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
 	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", (Get-AzureKeyVaultSecret -VaultName vaulty -Name azureClientID).secretvaluetext, "User")
 	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", (Get-AzureKeyVaultSecret -VaultName vaulty -Name azureClientSecret).secretvaluetext, "User")
 }
 
-$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
-import-module posh-git
+function azure-me() {
+	Add-AzureRmAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN `
+		-Credential ([pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force)))
+}
 
-Add-AzureRmAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN `
- -Credential ([pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force)))
- 
-$automationSecret = (Get-AzureKeyVaultSecret -VaultName vaulty -Name autoKey).secretvaluetext
-$msdn = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMSDN).secretvaluetext
-$mvp = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMVP).secretvaluetext
-$mct = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMCT).secretvaluetext
+function get-me-secret() {
+	$global:msdn = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMSDN).secretvaluetext
+	$global:mvp = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMVP).secretvaluetext
+	$global:mct = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMCT).secretvaluetext
+}
 
-cd \
-cls 
-
-# PATH="$HOME/bin:$HOME/.local/bin:$PATH"
-# PATH="$PATH:/mnt/c/Program\ Files/Docker/Docker/resources/bin"
-# alias docker="docker.exe"
+$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; Import-Module posh-git; cd \; cls
