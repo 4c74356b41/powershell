@@ -15,16 +15,19 @@ function develop-me {
 }
 
 function docker-me {
-  Param(
-  [string]$clientId=$env:AZURE_CLIENT_ID,
-  [string]$clientSecret=$env:AZURE_CLIENT_SECRET,
-  [string]$tenant=$env:AZURE_TENANT_ID
-  [string]$subscription=$MSDN,
-  [string]$image='dops',
-  [string]$mappotaDep='B:\bb\azure\deployment:/home/deployment',
-  [string]$mappotaOut='B:\bb\_envs:/etc/ansible/output'
-  )
-  docker run -it --rm -v $mappotaDep -v $mappotaOut -e "AZURE_CLIENT_ID=`"$clientId`"" -e "AZURE_SECRET=`"$clientSecret`"" -e "AZURE_SUBSCRIPTION_ID=`"$subscription`"" -e "AZURE_TENANT=`"$tenant`"" $image
+    Param(
+        [string]$clientId=$env:AZURE_CLIENT_ID,
+        [string]$clientSecret=$env:AZURE_CLIENT_SECRET,
+        [string]$tenant=$env:AZURE_TENANT_ID,
+        [string]$sub=$MSDN,
+        [string]$image='dops',
+        [string]$mapDeps='B:\bb\azure\deployment:/home/deployment',
+        [string]$mapOut='B:\bb\_envs:/etc/ansible/output'
+    )
+    $str = 'docker run -it --rm -v {0} -v {1} -e AZURE_CLIENT_ID="{2}" -e AZURE_SECRET="{3}" -e AZURE_SUBSCRIPTION_ID="{4}" -e AZURE_TENANT="{5}" {6}'
+    $invoke = $str -f $mapDeps, $mapOut, $clientId, $clientSecret, $sub, $tenant, $image
+
+    iex $invoke
 }
 
 function misc-me {
