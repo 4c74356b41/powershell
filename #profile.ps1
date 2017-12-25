@@ -110,4 +110,8 @@ function get-me-secret() {
 	$global:mct = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMCT).secretvaluetext
 }
 
+function debug-me() {
+	Set-PSBreakpoint -Variable StackTrace -Mode Write
+}
+
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; Import-Module posh-git; cd \; cls
