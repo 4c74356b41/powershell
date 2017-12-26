@@ -77,7 +77,7 @@ function contribute-me {
     )
     
     if (!(Get-MVProfile)) {
-	Set-MVPConfiguration -SubscriptionKey (Get-AzureKeyVaultSecret -VaultName vaulty -Name subKey).secretvaluetext
+	Set-MVPConfiguration -SubscriptionKey (Get-AzureKeyVaultSecret -VaultName vaulty -Name subApi).secretvaluetext
     }
     $splat = @{
         StartDate              = $when
