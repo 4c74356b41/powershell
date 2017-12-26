@@ -113,5 +113,5 @@ function get-me-secret() {
 function debug-me() {
 	Set-PSBreakpoint -Variable StackTrace -Mode Write
 }
-
-$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; Import-Module posh-git; cd \; cls
+try { Import-Module posh-git,mvp -ErrorAction Stop} catch { Install-Module posh-git,mvp -Confirm }
+$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; Import-Module posh-git,mvp; cd \; cls
