@@ -49,7 +49,7 @@ function contribute-me {
         [validateset('Article', 'Blog Site Posts', 'Book (Author)', 'Book (Co-Author)', 'Sample Project/Tools', 'Sample Code', 'Conference (booth presenter)', 'Conference (organizer)', 'Forum Moderator', 'Forum Participation (3rd Party forums)', 'Forum Participation (Microsoft Forums)', 'Mentorship', 'Open Source Project(s)', 'Other', 'Product Group Feedback (General)', 'Site Owner', 'Speaking (Conference)', 'Speaking (Local)', 'Speaking (User group)', 'Technical Social Media (Twitter, Facebook, LinkedIn...)', 'Translation Review, Feedback and Editing', 'User Group Owner', 'Video', 'Webcast', 'WebSite Posts')]
         [string]$contribution,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [string]$description,
 
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
@@ -68,15 +68,15 @@ function contribute-me {
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [string]$url,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
         [validateset('Microsoft', 'MVP Community', 'Everyone', 'Microsoft Only')]
         [string]$visibility = 'Everyone',
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [datetime]$when
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
+        [datetime]$when = Get-Date
     )
     
-    if (!(Get-MVProfile)) {
+    if (!(Get-MVPProfile)) {
 	Set-MVPConfiguration -SubscriptionKey (Get-AzureKeyVaultSecret -VaultName vaulty -Name subApi).secretvaluetext
     }
     $splat = @{
