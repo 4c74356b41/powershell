@@ -2,6 +2,10 @@ choco install jre8 -PackageParameters "/exclude:64" -y
 choco install tomcat -y -x86 -version 7.0.69 -ignoredependencies -params "unzipLocation=C:\\web"
 choco install apache-httpd -y -x86 -packageParameters '"/unzipLocation:C:\web /serviceName:Apache HTTPD 2.4.X"'
 
+docker pull microsoft/powershell --platform=linux
+docker pull microsoft/azure-cli --platform=linux
+docker build -t dops . --platform=linux
+
 #creds\session
 [Runtime.InteropServices.Marshal]::PtrToStringAuto;[Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)
 (Get-Credential).Password | ConvertFrom-SecureString | Out-File -FilePath blabla.cred
