@@ -114,5 +114,5 @@ function get-me-secret() {
 function debug-me() {
 	Set-PSBreakpoint -Variable StackTrace -Mode Write
 }
-try { Import-Module posh-git,mvp -ErrorAction Stop} catch { Install-Module posh-git,mvp -Confirm }
+try { Import-Module azurerm,posh-git,mvp -ErrorAction Stop} catch { Install-Module azurerm,posh-git,mvp -Confirm }
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; b:; cls
