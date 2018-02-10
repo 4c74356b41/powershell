@@ -73,7 +73,7 @@ function contribute-me {
         [string]$visibility = 'Everyone',
 
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-        [datetime]$when = Get-Date
+        [datetime]$when = (Get-Date)
     )
     
     if (!(Get-MVPProfile)) {
@@ -94,6 +94,7 @@ function contribute-me {
 }
 
 function secret-me() {
+	Enable-AzureRmContextAutosave
 	[Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzureKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
 	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", (Get-AzureKeyVaultSecret -VaultName vaulty -Name azureClientID).secretvaluetext, "User")
 	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", (Get-AzureKeyVaultSecret -VaultName vaulty -Name azureClientSecret).secretvaluetext, "User")
@@ -114,4 +115,4 @@ function debug-me() {
 	Set-PSBreakpoint -Variable StackTrace -Mode Write
 }
 try { Import-Module posh-git,mvp -ErrorAction Stop} catch { Install-Module posh-git,mvp -Confirm }
-$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; Import-Module posh-git,mvp; cd \; cls
+$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; b:; cls
