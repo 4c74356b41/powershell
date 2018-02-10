@@ -5,6 +5,8 @@ choco install apache-httpd -y -x86 -packageParameters '"/unzipLocation:C:\web /s
 docker pull microsoft/powershell --platform=linux
 docker pull microsoft/azure-cli --platform=linux
 docker build -t dops . --platform=linux
+docker pull microsoft/aspnet:4.7.1
+docker pull microsoft/dotnet-framework:4.7.1
 
 #creds\session
 [Runtime.InteropServices.Marshal]::PtrToStringAuto;[Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)
