@@ -1,10 +1,9 @@
-function token-me() {
-    $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-    $currentAzureContext = Get-AzureRmContext
-    $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azureRmProfile)
-    $token = $profileClient.AcquireAccessToken($currentAzureContext.Subscription.TenantId)
-    $token.AccessToken
-}
+function kg([string[]]$passMe) { kubectl get $passMe }
+function ka([string[]]$passMe) { kubectl apply -f $passMe }
+function kr([string[]]$passMe) { kubectl delete $passMe }
+function kd([string[]]$passMe) { kubectl describe $passMe }
+function ke([string[]]$passMe) { kubectl exec -it $passMe }
+function kl([string[]]$passMe) { kubectl logs $passMe }
 
 function docker-me {
     Param(
