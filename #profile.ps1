@@ -5,6 +5,12 @@ function kd([string[]]$passMe) { kubectl describe $passMe }
 function ke([string[]]$passMe) { kubectl exec -it $passMe }
 function kl([string[]]$passMe) { kubectl logs $passMe }
 
+function token-me() {
+	$context = Get-AzureRmContext
+	$cache = $context.TokenCache
+	$cacheItem = $cache.ReadItems()
+}
+
 function docker-me {
     Param(
         [string]$clientId=$env:AZURE_CLIENT_ID,
