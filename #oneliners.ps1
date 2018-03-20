@@ -46,3 +46,16 @@ gci something | % { New-MailboxImportRequest -Mailbox $($_ -replace ".{4}$") -Fi
 gci path -Filter * -Recurse | % { ( gci $_.FullName | % { $_ -replace '','' } ) | sc $_.FullName }
 #get files older then x
 ( gci -Recurse | ? { $_.LastWriteTime -gt (get-date).addyears(-5) } | Measure-Object -sum -Property Length ).sum/1gb
+
+add-type @"
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+public class TrustAllCertsPolicy : ICertificatePolicy {
+    public bool CheckValidationResult(
+        ServicePoint srvPoint, X509Certificate certificate,
+        WebRequest request, int certificateProblem) {
+        return true;
+    }
+}
+"@
+[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
