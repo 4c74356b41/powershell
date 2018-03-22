@@ -9,6 +9,7 @@ function token-me() {
 	$context = Get-AzureRmContext
 	$cache = $context.TokenCache
 	$cacheItem = $cache.ReadItems()
+	$cacheItem
 }
 
 function docker-me {
@@ -120,4 +121,4 @@ function debug-me() {
 	Set-PSBreakpoint -Variable StackTrace -Mode Write
 }
 try { Import-Module azurerm,posh-git,mvp -ErrorAction Stop} catch { Install-Module azurerm,posh-git,mvp -Confirm }
-$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; b:; cls
+$GitPromptSettings.AfterText += "`n"; $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; b:; cls
