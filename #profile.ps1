@@ -14,17 +14,26 @@ function token-me() {
 
 function docker-me {
     Param(
-        [string]$clientId=$env:AZURE_CLIENT_ID,
-        [string]$clientSecret=$env:AZURE_CLIENT_SECRET,
+        [string]$user=$env:AZURE_CLIENT_ID,
+        [string]$pswd=$env:AZURE_CLIENT_SECRET,
         [string]$tenant=$env:AZURE_TENANT_ID,
-        [string]$sub=$MSDN,
-        [string]$image='dops',
-        [string]$mapDeps='B:\bb\azure\deployment:/home/deployment',
-        [string]$mapOut='B:\bb\_envs:/etc/ansible/output'
-    )
-    $str = 'docker run -it --rm -v {0} -v {1} -e AZURE_CLIENT_ID="{2}" -e AZURE_SECRET="{3}" -e AZURE_SUBSCRIPTION_ID="{4}" -e AZURE_TENANT="{5}" {6}'
-    $invoke = $str -f $mapDeps, $mapOut, $clientId, $clientSecret, $sub, $tenant, $image
+        [string]$subId=$MSDN,
+        [switch]$spn,
 
+        [string]$image='dops',
+        [string]$mapDeps='B:\azure\deployment:/home/deployment',
+        [string]$mapOut='B:\_envs:/etc/ansible/output'
+    )
+    $str = 'docker run -it --rm -v {0} -v {1} -e AZURE_SUBSCRIPTION_ID="{2}" -e AZURE_TENANT="{3}" -e {4}="{5}" -e {6}="{7}" {8}'
+    if ( $spn.IsPresent ) {
+        $userReplace = 'AZURE_CLIENT_ID'
+        $pswdReplace = 'AZURE_SECRET'
+    } else {
+        $userReplace = 'AZURE_AD_USER'
+        $pswdReplace = 'AZURE_PASSWORD'
+    }
+
+    $invoke = $str -f $mapDeps, $mapOut, $subId, $tenant, $userReplace, $user, $pswdReplace, $pswd, $image
     iex $invoke
 }
 
