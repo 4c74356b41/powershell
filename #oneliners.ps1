@@ -20,6 +20,7 @@ Set-PSBreakpoint -Variable StackTrace -Mode Write
 ([adsi]"WinNT://./Administrators,group").Add("WinNT://DOMAIN/grpname,group") #username,user
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "machineA,machineB" # "*"
 Invoke-WmiMethod -Class win32_process -name Create -ComputerName dflt -Credential $cred -ArgumentList "powershell.exe -noprofile -noninteractive -executionpolicy bypass -encodedCommand "
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 #get hyper-v report
 Invoke-Command -ComputerName 'hostname' -ScriptBlock { Get-VM | Get-VMProcessor | ? { $_.CompatibilityForMigrationEnabled -eq $false } | fl VMname, CompatibilityForMigrationEnabled }
