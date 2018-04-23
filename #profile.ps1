@@ -5,6 +5,18 @@ function kd([string[]]$passMe) { kubectl describe $passMe }
 function ke([string[]]$passMe) { kubectl exec -it $passMe }
 function kl([string[]]$passMe) { kubectl logs $passMe }
 
+function develop-me() {
+	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
+	$whbody  = @{ tada = ((iwr httpbin.org/ip).content | convertfrom-json).origin } | ConvertTo-Json
+	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
+}
+
+function ssh-me() {
+    Get-Content B:\_envs\cis\ssh\api-gateway\api-gateway.txt
+    Get-Content B:\_envs\cis\otherPasswords\pwdmcrsrv
+    Invoke-Expression "ssh -i B:\_envs\cis\ssh\api-gateway\api-gateway.pem -L 23389:10.5.0.31:3389 cis-api-gateway.bbrmt.com -l cis-api-gateway -N"
+}
+
 function token-me() {
 	$context = Get-AzureRmContext
 	$cache = $context.TokenCache
@@ -124,6 +136,7 @@ function get-me-secret() {
 	$global:msdn = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMSDN).secretvaluetext
 	$global:mvp = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMVP).secretvaluetext
 	$global:mct = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMCT).secretvaluetext
+	$global:automationSecret = (Get-AzureKeyVaultSecret -VaultName vaulty -Name autoKey).secretvaluetext
 }
 
 function debug-me() {
