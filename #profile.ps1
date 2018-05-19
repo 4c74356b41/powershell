@@ -6,9 +6,9 @@ function ke([string[]]$passMe) { kubectl exec -it $passMe }
 function kl([string[]]$passMe) { kubectl logs $passMe }
 
 function develop-me() {
+        if ( !$automationSecret ) { $automationSecret = $env:autoKey }
 	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
-	$whbody  = @{ tada = ((iwr httpbin.org/ip).content | convertfrom-json).origin } | ConvertTo-Json
-	Invoke-RestMethod -Method Post -Uri $webhook -Body $whbody
+	Invoke-RestMethod -Method Post -Uri $webhook -Body "{ tada = $((irm httpbin.org/ip).origin) }"
 }
 
 function ssh-me() {
