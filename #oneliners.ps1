@@ -1,40 +1,20 @@
+set-executionpolicy unrestricted
+iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco install -y kubernetes-cli kubernetes-helm docker-desktop git 7zip vscode googlechrome vlc microsoft-teams slack telegram
+install-module posh-git,mvp,az
 
 #creds\session
 [Runtime.InteropServices.Marshal]::PtrToStringAuto;[Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)
 (Get-Credential).Password | ConvertFrom-SecureString | Out-File -FilePath blabla.cred
 $cred = New-Object System.Management.Automation.PsCredential "dom\usr",( Get-Content blabla.cred | ConvertTo-SecureString )
 $cred = [pscredential]::new('administrator',(ConvertTo-SecureString -String '!Q2w3e4r' -AsPlainText -Force))
-$session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://fqdn/powershell/ -Credential $cred -Authentication Kerberos -AllowRedirection
 
 #misc
-Set-PSBreakpoint -Variable StackTrace -Mode Write
 ([adsi]"WinNT://./Administrators,group").Add("WinNT://DOMAIN/grpname,group") #username,user
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "machineA,machineB" # "*"
 Invoke-WmiMethod -Class win32_process -name Create -ComputerName dflt -Credential $cred -ArgumentList "powershell.exe -noprofile -noninteractive -executionpolicy bypass -encodedCommand "
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-#get hyper-v report
-Invoke-Command -ComputerName 'hostname' -ScriptBlock { Get-VM | Get-VMProcessor | ? { $_.CompatibilityForMigrationEnabled -eq $false } | fl VMname, CompatibilityForMigrationEnabled }
-Get-VM | Format-Table Name, IntegrationServicesVersion
-Get-VM | Measure-VM | select VMName, @{ Label='TotalIO';Expression = { $_.AggregatedDiskDataRead + $_.AggregatedDiskDataWritten }}, @{ Label='%Read';Expression={"{0:P2}" -f ($_.AggregatedDiskDataRead/($_.AggregatedDiskDataRead + $_.AggregatedDiskDataWritten))}}, @{Label='%Write';Expression={"{0:P2}" -f ($_.AggregatedDiskDataWritten/($_.AggregatedDiskDataRead + $_.AggregatedDiskDataWritten))}}, @{Label='TotalIOPS';Expression = {"{0:N2}" -f (($_.AggregatedDiskDataRead + $_.AggregatedDiskDataWritten)/$_.MeteringDuration.Seconds)}}
-#set hdd iops limits
-Get-VM -ComputerName 'hostname' | % {
-    Set-VMHardDiskDrive -ComputerName 'hostname' -VMName $_.VMName -ControllerType $_.HardDrives.ControllerType `
-    -ControllerNumber $_.HardDrives.ControllerNumber -ControllerLocation $_.HardDrives.ControllerLocation `
-    -MinimumIOPS 0 -MaximumIOPS 500
-}
-#get fibre adapters
-$data = Get-WmiObject -namespace "root\wmi" -class MSFC_FibrePortNPIVAttributes -computer 'hostname'
-$data | select WWPN | % {[array]::Reverse($_.WWPN); [BitConverter]::ToUInt64($_.WWPN, 0).ToString("X") }
-wmic /node:computername product where 'vendor like "Microsoft%"'
-#nat switch
-New-VMSwitch -SwitchName “NATSwitch” -SwitchType Internal
-New-NetIPAddress -IPAddress 192.168.0.1 -PrefixLength 24 -InterfaceAlias “vEthernet (NATSwitch)”
-New-NetNAT -Name “NATNetwork” -InternalIPInterfaceAddressPrefix 192.168.0.0/24
-
-#import mailboxes from folder
-gci something | % { New-MailboxImportRequest -Mailbox $($_ -replace ".{4}$") -FilePath $_.FullName -BadItemLimit 300 -LargeItemLimit 50 -AcceptLargeDataLoss }
 #replace something in files
 gci path -Filter * -Recurse | % { ( gci $_.FullName | % { $_ -replace '','' } ) | sc $_.FullName }
 #get files older then x
