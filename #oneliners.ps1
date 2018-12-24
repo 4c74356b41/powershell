@@ -1,12 +1,4 @@
-choco install jre8 -PackageParameters "/exclude:64" -y
-choco install tomcat -y -x86 -version 7.0.69 -ignoredependencies -params "unzipLocation=C:\\web"
-choco install apache-httpd -y -x86 -packageParameters '"/unzipLocation:C:\web /serviceName:Apache HTTPD 2.4.X"'
-
-docker pull microsoft/powershell --platform=linux
-docker pull microsoft/azure-cli --platform=linux
-docker build -t dops . --platform=linux
-docker pull microsoft/aspnet:4.7.1
-docker pull microsoft/dotnet-framework:4.7.1
+choco install -y kubernetes-cli kubernetes-helm docker-desktop git 7zip vscode googlechrome vlc microsoft-teams slack telegram
 
 #creds\session
 [Runtime.InteropServices.Marshal]::PtrToStringAuto;[Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)
