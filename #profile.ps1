@@ -86,6 +86,7 @@ function secret-me() {
 	[Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
 	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientID).secretvaluetext, "User")
 	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientSecret).secretvaluetext, "User")
+	[Environment]::SetEnvironmentVariable("autoKey", (Get-AzKeyVaultSecret -VaultName vaulty -Name autoKey).secretvaluetext, "User")
 }
 
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
