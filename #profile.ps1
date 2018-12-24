@@ -1,30 +1,3 @@
-function New-BashStyleAlias([string]$name, [string]$command)
-{
-    $sb = [scriptblock]::Create($command)
-    New-Item "Function:\global:$name" -Value $sb | Out-Null
-}
-
-Set-Alias -Name k -Value kubectl
-New-BashStyleAlias kg 'kubectl get @args'
-New-BashStyleAlias kd 'kubectl describe @args'
-New-BashStyleAlias ka 'kubectl apply -f @args'
-New-BashStyleAlias kr 'kubectl delete @args'
-New-BashStyleAlias ke 'kubectl exec -it @args'
-New-BashStyleAlias kl 'kubectl logs @args'
-
-function develop-me() {
-        if ( !$automationSecret ) { $automationSecret = $env:autoKey }
-	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
-	Invoke-RestMethod -Method Post -Uri $webhook -Body ( @{ tada = (irm httpbin.org/ip).origin } | ConvertTo-Json )
-}
-
-function token-me() {
-	$context = Get-AzureRmContext
-	$cache = $context.TokenCache
-	$cacheItem = $cache.ReadItems()
-	$cacheItem
-}
-
 function contribute-me {
     [CmdletBinding()]
     Param(
@@ -76,15 +49,43 @@ function contribute-me {
     New-MVPContribution @splat
 }
 
-function azure-me() {
-	Add-AzureRmAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN `
-		-Credential ([pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force)))
+function New-BashStyleAlias([string]$name, [string]$command)
+{
+    $sb = [scriptblock]::Create($command)
+    New-Item "Function:\global:$name" -Value $sb | Out-Null
 }
 
-function get-me-secret() {
-	$global:msdn = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMSDN).secretvaluetext
-	$global:mvp = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMVP).secretvaluetext
-	$global:mct = (Get-AzureKeyVaultSecret -VaultName vaulty -Name subMCT).secretvaluetext
+Set-Alias -Name k -Value kubectl
+New-BashStyleAlias kg 'kubectl get @args'
+New-BashStyleAlias kd 'kubectl describe @args'
+New-BashStyleAlias ka 'kubectl apply -f @args'
+New-BashStyleAlias kr 'kubectl delete @args'
+New-BashStyleAlias ke 'kubectl exec -it @args'
+New-BashStyleAlias kl 'kubectl logs @args'
+
+function develop-me() {
+        if ( !$automationSecret ) { $automationSecret = $env:autoKey }
+	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
+	Invoke-RestMethod -Method Post -Uri $webhook -Body ( @{ tada = (irm httpbin.org/ip).origin } | ConvertTo-Json )
+}
+
+function token-me() {
+	$context = Get-AzureRmContext
+	$cache = $context.TokenCache
+	$cacheItem = $cache.ReadItems()
+	$cacheItem
+}
+
+function azure-me() {
+	$cred = [pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force))
+	Add-AzAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN -Credential $cred
+}
+
+function secret-me() {
+	Enable-AzContextAutosave
+	[Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
+	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientID).secretvaluetext, "User")
+	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientSecret).secretvaluetext, "User")
 }
 
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
