@@ -49,8 +49,11 @@ function contribute-me {
     New-MVPContribution @splat
 }
 
-function New-BashStyleAlias([string]$name, [string]$command)
-{
+function bloh-me([string]$title, [string]$tags) {
+    docker run --rm -it -v 'C:/_/bloh:/tmp/jinja' python:3.6-jessie /bin/bash -c "cd /tmp/jinja/ && pip install -r requirements.txt && python new_post.py -t '$title' -s '$tags'"
+}
+
+function New-BashStyleAlias([string]$name, [string]$command) {
     $sb = [scriptblock]::Create($command)
     New-Item "Function:\global:$name" -Value $sb | Out-Null
 }
