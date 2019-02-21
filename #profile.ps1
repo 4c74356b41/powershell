@@ -2,7 +2,7 @@ function contribute-me {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [validateset('Article', 'Blog Site Posts', 'Book (Author)', 'Book (Co-Author)', 'Sample Project/Tools', 'Sample Code', 'Conference (booth presenter)', 'Conference (organizer)', 'Forum Moderator', 'Forum Participation (3rd Party forums)', 'Forum Participation (Microsoft Forums)', 'Mentorship', 'Open Source Project(s)', 'Other', 'Product Group Feedback (General)', 'Site Owner', 'Speaking (Conference)', 'Speaking (Local)', 'Speaking (User group)', 'Technical Social Media (Twitter, Facebook, LinkedIn...)', 'Translation Review, Feedback and Editing', 'User Group Owner', 'Video', 'Webcast', 'WebSite Posts')]
+        [validateset('Article','Blog/Website Post','Book (Author)','Book (Co-Author)','Conference (Staffing)','Docs.Microsoft.com Contribution','Forum Moderator','Forum Participation (3rd Party forums)','Forum Participation (Microsoft Forums)','Mentorship','Microsoft Open Source Projects','Non-Microsoft Open Source Projects','Organizer (User Group/Meetup/Local Events)','Organizer of Conference','Other','Product Group Feedback','Sample Code/Projects/Tools','Site Owner','Speaking (Conference)','Speaking (User Group/Meetup/Local events)','Technical Social Media (Twitter, Facebook, LinkedIn...)','Translation Review, Feedback and Editing','Video/Webcast/Podcast','Workshop/Volunteer/Proctor')]
         [string]$contribution,
 
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
@@ -15,7 +15,7 @@ function contribute-me {
         [string]$reach,
         
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [validateset('ARM & DevOps on Azure (Chef, Puppet, Salt, Ansible, Dev/Test Lab)', 'Azure App Service', 'Azure Backup & Recovery', 'Azure Compute (VM, VMSS, Cloud Services)', 'Azure Container Services (Docker, Windows Server)', 'Azure Networking', 'Azure Security', 'Azure Storage', 'SDK support on Azure (.NET, Node.js, Java, PHP, Python, GO, Ruby)', 'Azure Stack', 'Chef/Puppet in Datacenter', 'Container Management', 'Datacenter Management', 'High Availability', 'PowerShell', 'Azure SQL Database', 'Python')]
+        [validateset('ARM & DevOps on Azure (Chef, Puppet, Salt, Ansible, Dev/Test Lab)','Azure App Service','Azure Backup & Recovery','Azure Blockchain','Azure Compute (VM, VMSS, HPC/Batch, Cloud Services)','Azure Container Services (Docker, Windows Server)','Azure IoT','Azure Networking','Azure Security and Compliance','Azure Service Fabric','Azure Stack','Azure Storage','Enterprise Integration','SDK support on Azure (.NET, Node.js, Java, PHP, Python, GO, Ruby)')]
         [string]$technology = 'ARM & DevOps on Azure (Chef, Puppet, Salt, Ansible, Dev/Test Lab)',
         
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
