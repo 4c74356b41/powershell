@@ -63,8 +63,11 @@ New-BashStyleAlias kg 'kubectl get @args'
 New-BashStyleAlias kd 'kubectl describe @args'
 New-BashStyleAlias ka 'kubectl apply -f @args'
 New-BashStyleAlias kr 'kubectl delete @args'
-New-BashStyleAlias ke 'kubectl exec -it @args'
+New-BashStyleAlias kx 'kubectl exec -it @args'
 New-BashStyleAlias kl 'kubectl logs @args'
+New-BashStyleAlias kt 'kubectl top @args'
+New-BashStyleAlias ke 'kubectl edit @args'
+New-BashStyleAlias kc 'kubectl create @args'
 
 function develop-me() {
         if ( !$automationSecret ) { $automationSecret = $env:autoKey }
