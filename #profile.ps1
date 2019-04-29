@@ -98,4 +98,4 @@ function secret-me() {
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
 
 Import-Module posh-git,mvp; $GitPromptSettings.AfterText += "`n"
-$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; cd "C:\_"; # cls
+$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; cd "C:\_"; cls
