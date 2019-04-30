@@ -60,12 +60,12 @@ function New-BashStyleAlias([string]$name, [string]$command) {
 
 Set-Alias -Name k -Value kubectl
 New-BashStyleAlias kg 'kubectl get @args'
-New-BashStyleAlias kg 'kubectl get -o yaml --export @args'
+New-BashStyleAlias kgo 'kubectl get -o yaml --export @args'
 New-BashStyleAlias kd 'kubectl describe @args'
 New-BashStyleAlias ka 'kubectl apply -f @args'
 New-BashStyleAlias kr 'kubectl delete @args'
 New-BashStyleAlias kx 'kubectl exec @args'
-New-BashStyleAlias kx 'kubectl exec -it @args'
+New-BashStyleAlias kxi 'kubectl exec -it @args'
 New-BashStyleAlias kl 'kubectl logs @args'
 New-BashStyleAlias kt 'kubectl top @args'
 New-BashStyleAlias ke 'kubectl edit @args'
