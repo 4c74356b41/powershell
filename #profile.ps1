@@ -59,19 +59,21 @@ function New-BashStyleAlias([string]$name, [string]$command) {
 }
 
 Set-Alias -Name k -Value kubectl
-New-BashStyleAlias kd 'kubectl describe @args'
-New-BashStyleAlias ka 'kubectl apply -f @args'
-New-BashStyleAlias kr 'kubectl delete @args'
-New-BashStyleAlias kl 'kubectl logs @args'
-New-BashStyleAlias kt 'kubectl top @args'
-New-BashStyleAlias kf 'kubectl port-forward @args'
-New-BashStyleAlias ke 'kubectl edit @args'
-New-BashStyleAlias kc 'kubectl create @args'
-New-BashStyleAlias ks 'kubectl scale @args'
-New-BashStyleAlias kx 'kubectl exec @args'
+New-BashStyleAlias kk  'kubectl config @args'
+New-BashStyleAlias kd  'kubectl describe @args'
+New-BashStyleAlias ka  'kubectl apply -f @args'
+New-BashStyleAlias kr  'kubectl delete @args'
+New-BashStyleAlias kl  'kubectl logs @args'
+New-BashStyleAlias kt  'kubectl top @args'
+New-BashStyleAlias kf  'kubectl port-forward @args'
+New-BashStyleAlias ke  'kubectl edit @args'
+New-BashStyleAlias kc  'kubectl create @args'
+New-BashStyleAlias ks  'kubectl scale @args'
+New-BashStyleAlias kx  'kubectl exec @args'
 New-BashStyleAlias kxi 'kubectl exec -it @args'
-New-BashStyleAlias kg 'kubectl get @args'
+New-BashStyleAlias kg  'kubectl get @args'
 New-BashStyleAlias kgo 'kubectl get -o yaml --export @args'
+New-BashStyleAlias kga 'kubectl get --all-namespaces @args'
 
 function develop-me() {
         if ( !$automationSecret ) { $automationSecret = $env:autoKey }
