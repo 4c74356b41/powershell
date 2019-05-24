@@ -1,7 +1,10 @@
 # initial setup
 set-executionpolicy unrestricted
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install -y kubernetes-cli kubernetes-helm docker-desktop git 7zip vscode googlechrome vlc microsoft-teams slack telegram
+choco install -y kubernetes-cli kubernetes-helm git 7zip vscode vlc microsoft-teams slack telegram
+if (!(Invoke-RestMethod -Headers @{"Metadata"="true"} 'http://169.254.169.254/metadata/instance?api-version=2018-10-01')) {
+    choco install -y docker-desktop
+}
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 install-module posh-git,mvp,az
 git config --global user.email "4c74356b41@outlook.com"
@@ -14,17 +17,17 @@ git config --global user.name "Gleb Boushev"
 $cred = New-Object System.Management.Automation.PsCredential "dom\usr",( Get-Content blabla.cred | ConvertTo-SecureString )
 $cred = [pscredential]::new('administrator',(ConvertTo-SecureString -String '!Q2w3e4r' -AsPlainText -Force))
 
-#misc
+# misc
 ([adsi]"WinNT://./Administrators,group").Add("WinNT://DOMAIN/grpname,group") #username,user
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "machineA,machineB" # "*"
 Invoke-WmiMethod -Class win32_process -name Create -ComputerName dflt -Credential $cred -ArgumentList "powershell.exe -noprofile -noninteractive -executionpolicy bypass -encodedCommand "
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-#replace something in files
+# replace something in files
 gci path -Filter * -Recurse | % { ( gci $_.FullName | % { $_ -replace '','' } ) | sc $_.FullName }
-#get files older then x
+# get files older then x
 ( gci -Recurse | ? { $_.LastWriteTime -gt (get-date).addyears(-5) } | Measure-Object -sum -Property Length ).sum/1gb
 
+# ssl stuff
 add-type @"
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -37,3 +40,4 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 }
 "@
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
