@@ -4,6 +4,8 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/in
 choco install -y kubernetes-cli kubernetes-helm docker-desktop git 7zip vscode googlechrome vlc microsoft-teams slack telegram
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 install-module posh-git,mvp,az
+git config --global user.email "4c74356b41@outlook.com"
+git config --global user.name "Gleb Boushev"
 'Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1")' > $profile
 
 #creds\session
