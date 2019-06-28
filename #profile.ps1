@@ -105,5 +105,5 @@ function secret-me() {
 
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
 
-Import-Module posh-git,mvp; $GitPromptSettings.AfterText += "`n"
+Import-Module posh-git,mvp; $GitPromptSettings.AfterText += "`n"; $ENV:FLUX_FORWARD_NAMESPACE="flux"
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; cd "C:\_"; cls
