@@ -59,6 +59,8 @@ function New-BashStyleAlias([string]$name, [string]$command) {
 }
 
 Set-Alias -Name k -Value kubectl
+Set-Alias -Name f -Value fluxctl
+Set-Alias -Name i -Value istioctl
 New-BashStyleAlias kk  'kubectl config @args'
 New-BashStyleAlias kd  'kubectl describe @args'
 New-BashStyleAlias ka  'kubectl apply -f @args'
