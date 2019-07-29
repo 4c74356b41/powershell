@@ -95,6 +95,14 @@ function azure-me() {
 	Add-AzAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN -Credential $cred
 }
 
+function pulumi-me-mi-me-mi-me-mi() {
+	azure-me
+	$env:ARM_CLIENT_ID=$ENV:AZURE_CLIENT_ID
+	$env:ARM_TENANT_ID=$ENV:AZURE_TENANT_ID
+	$env:ARM_SUBSCRIPTION_ID=(Get-AzContext).Subscription.Id
+	$env:ARM_CLIENT_SECRET=$ENV:AZURE_CLIENT_SECRET
+}
+
 function secret-me() {
 	Enable-AzContextAutosave
 	[Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
