@@ -75,6 +75,7 @@ New-BashStyleAlias kx  'kubectl exec @args'
 New-BashStyleAlias kxi 'kubectl exec -it @args'
 New-BashStyleAlias kg  'kubectl get @args'
 New-BashStyleAlias kgo 'kubectl get -o yaml --export @args'
+New-BashStyleAlias kgj 'kubectl get -o json --export @args'
 New-BashStyleAlias kga 'kubectl get --all-namespaces @args'
 
 function develop-me() {
