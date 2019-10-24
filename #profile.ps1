@@ -78,7 +78,7 @@ New-BashStyleAlias kg   'kubectl get @args'
 New-BashStyleAlias kgo  'kubectl get -o yaml --export @args'
 New-BashStyleAlias kgj  'kubectl get -o json --export @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
-New-BashStyleAlias kgaо 'kubectl get --all-namespaces -o json @args'
+New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 
 function develop-me() {
         if ( !$automationSecret ) { $automationSecret = $env:autoKey }
