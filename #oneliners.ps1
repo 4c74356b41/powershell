@@ -6,7 +6,7 @@ if (!(Invoke-RestMethod -Headers @{"Metadata"="true"} 'http://169.254.169.254/me
     choco install -y docker-desktop
 }
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-install-module posh-git,mvp,az
+install-module posh-git,mvp,az,az.resourcegraph
 git config --global user.email "4c74356b41@outlook.com"
 git config --global user.name "Gleb Boushev"
 'Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1")' > $profile
