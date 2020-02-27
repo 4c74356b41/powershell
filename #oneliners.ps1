@@ -1,7 +1,8 @@
 # initial setup
 set-executionpolicy unrestricted
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install -y kubernetes-cli kubernetes-helm git 7zip vscode vlc microsoft-teams slack telegram
+choco install -y kubernetes-cli kubernetes-helm istioctl openshift-cli 
+choco install -y git 7zip vscode vlc microsoft-teams slack telegram
 if (!(Invoke-RestMethod -Headers @{"Metadata"="true"} 'http://169.254.169.254/metadata/instance?api-version=2018-10-01')) {
     choco install -y docker-desktop
 }
