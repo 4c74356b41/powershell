@@ -87,10 +87,18 @@ function develop-me() {
 }
 
 function token-me() {
-	$context = Get-AzureRmContext
-	$cache = $context.TokenCache
-	$cacheItem = $cache.ReadItems()
-	$cacheItem
+	$azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+	if(!$azProfile.Accounts.Count) {
+		Throw "Ensure you have logged in before calling this function."    
+    	}
+  
+	$profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azProfile)
+	$token = $profileClient.AcquireAccessToken((Get-AzContext).Tenant.TenantId)
+
+	if (!$token.AccessToken) {
+		Throw "No Token"
+	}
+	@{ Authorization = "Bearer {0}" -f $token.AccessToken}
 }
 
 function azure-me() {
