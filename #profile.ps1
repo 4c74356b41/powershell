@@ -81,45 +81,71 @@ New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 
 function develop-me() {
-        if ( !$automationSecret ) { $automationSecret = $env:autoKey }
-	$webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
-	Invoke-RestMethod -Method Post -Uri $webhook -Body ( @{ tada = (irm httpbin.org/ip).origin } | ConvertTo-Json )
+    if ( !$automationSecret ) { $automationSecret = $env:autoKey }
+    $webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
+    Invoke-RestMethod -Method Post -Uri $webhook -Body ( @{ tada = (irm httpbin.org/ip).origin } | ConvertTo-Json )
 }
 
-function token-me() {
-	$azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-	if(!$azProfile.Accounts.Count) {
-		Throw "Ensure you have logged in before calling this function."    
-    	}
+function token-me {
+    $azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+    if (!$azProfile.Accounts.Count) {
+        Throw "Ensure you have logged in before calling this function."    
+    }
   
-	$profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azProfile)
-	$token = $profileClient.AcquireAccessToken((Get-AzContext).Tenant.TenantId)
+    $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azProfile)
+    $token = $profileClient.AcquireAccessToken((Get-AzContext).Tenant.TenantId)
 
-	if (!$token.AccessToken) {
-		Throw "No Token"
-	}
-	@{ Authorization = "Bearer {0}" -f $token.AccessToken}
+    if (!$token.AccessToken) {
+        Throw "No Token"
+    }
+    @{ Authorization = "Bearer {0}" -f $token.AccessToken }
+}
+
+function timestamp-me {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$resourceId,
+        [Parameter(Mandatory=$false)]
+        [int]$timeRange = 72
+    )
+
+    $arr = $resourceId -split '/'
+    $subscriptionId = $arr[2]
+    $resourceType = "{0}/{1}" -f $arr[6], $arr[7]
+    $resourceName = $arr[-1]
+
+    $apiVersions = ( Get-AzResourceProvider -ProviderNamespace $arr[6] ).ResourceTypes
+    $apiVersion = $apiVersions.where{ $_.ResourceTypeName -eq $arr[7] }.ApiVersions | Select-Object -First 1
+
+    $Uri = "https://management.azure.com/subscriptions/{0}/resources?`$filter=name eq '{1}' and resourceType eq '{2}'&`$expand=createdTime&api-version={3}"
+    $result = Invoke-RestMethod -Headers (token-me) -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
+
+    if(!$result.value.createdTime) {
+       Throw "No 'CreatedTime' property"
+    }
+    $result.value.createdTime
 }
 
 function azure-me() {
-	$cred = [pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force))
-	Add-AzAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN -Credential $cred
+    $cred = [pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force))
+    Add-AzAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN -Credential $cred
 }
 
 function pulumi-me-mi-me-mi-me-mi() {
-	azure-me
-	$env:ARM_CLIENT_ID=$ENV:AZURE_CLIENT_ID
-	$env:ARM_TENANT_ID=$ENV:AZURE_TENANT_ID
-	$env:ARM_SUBSCRIPTION_ID=(Get-AzContext).Subscription.Id
-	$env:ARM_CLIENT_SECRET=$ENV:AZURE_CLIENT_SECRET
+    azure-me
+    $env:ARM_CLIENT_ID=$ENV:AZURE_CLIENT_ID
+    $env:ARM_TENANT_ID=$ENV:AZURE_TENANT_ID
+    $env:ARM_SUBSCRIPTION_ID=(Get-AzContext).Subscription.Id
+    $env:ARM_CLIENT_SECRET=$ENV:AZURE_CLIENT_SECRET
 }
 
 function secret-me() {
-	Enable-AzContextAutosave
-	[Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
-	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientID).secretvaluetext, "User")
-	[Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientSecret).secretvaluetext, "User")
-	[Environment]::SetEnvironmentVariable("autoKey", (Get-AzKeyVaultSecret -VaultName vaulty -Name autoKey).secretvaluetext, "User")
+    Enable-AzContextAutosave
+    [Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
+    [Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientID).secretvaluetext, "User")
+    [Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientSecret).secretvaluetext, "User")
+    [Environment]::SetEnvironmentVariable("autoKey", (Get-AzKeyVaultSecret -VaultName vaulty -Name autoKey).secretvaluetext, "User")
 }
 
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
