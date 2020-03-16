@@ -80,6 +80,24 @@ New-BashStyleAlias kgj  'kubectl get -o json --export @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 
+function gca {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true)]
+        [string]$workItemId,
+        [Parameter(Mandatory = $true)]
+        [string]$commitMessage,
+	[switch]$commitAll
+    )
+    $commitMessage = '#{0}: {1}' -f $workItemId, $commitMessage
+    if ($commitAll.IsPresent) {
+        git add -A
+    } else {
+        git add -u
+    }
+    git commit -m $commitMessage
+}
+
 function develop-me() {
     if ( !$automationSecret ) { $automationSecret = $env:autoKey }
     $webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
