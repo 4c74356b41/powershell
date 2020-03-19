@@ -98,6 +98,15 @@ function gca {
     git commit -m $commitMessage
 }
 
+function dcr {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$localPath
+    )
+    docker run -it -v C:\_\$localPath:/ci ci    
+}
+
 function develop-me() {
     if ( !$automationSecret ) { $automationSecret = $env:autoKey }
     $webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
