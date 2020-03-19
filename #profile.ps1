@@ -104,7 +104,7 @@ function dcr {
         [Parameter(Mandatory=$true)]
         [string]$localPath
     )
-    docker run -it -v C:\_\$localPath:/ci ci    
+    docker run -it -v C:\_\${localPath}:/ci ci    
 }
 
 function develop-me() {
