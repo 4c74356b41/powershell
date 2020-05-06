@@ -1,0 +1,39 @@
+kubectl run -it --rm --generator=run-pod/v1 aks-ssh --image=alpine --labels=app=aksssh
+
+# second terminal
+kubectl exec aks-ssh -c aks-ssh -- apk update
+kubectl exec aks-ssh -c aks-ssh -- apk add openssh-client bash
+kubectl cp ~/.ssh/id_rsa aks-ssh:/id_rsa
+kubectl exec aks-ssh -c aks-ssh chmod 0600 id_rsa
+
+ssh -i id_rsa username@ipaddress
+* do stuff *
+scp -i id_rsa username@ipaddress:~/host.file ./pod.file
+
+kubectl cp aks-ssh:pod.file ~/local.file
+
+# sleep pod
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: test
+  name: test
+spec:
+  selector:
+    matchLabels:
+      run: test
+  template:
+    metadata:
+      labels:
+        run: test
+    spec:
+      containers:
+      - args:
+        - -ec
+        - sleep 1000
+        command:
+        - /bin/sh
+        image: byrnedo/alpine-curl
+        imagePullPolicy: Always
