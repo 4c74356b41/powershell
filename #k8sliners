@@ -37,3 +37,22 @@ spec:
         - /bin/sh
         image: byrnedo/alpine-curl
         imagePullPolicy: Always
+
+# strace sidecar
+
+      - args:
+        - -ec
+        - sleep 100000
+        command:
+        - /bin/sh
+        image: ubuntu
+        imagePullPolicy: Always
+        name: shell
+        resources: {}
+        securityContext:
+          capabilities:
+            add:
+            - SYS_PTRACE
+          readOnlyRootFilesystem: false
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
