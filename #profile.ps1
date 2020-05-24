@@ -83,6 +83,59 @@ New-BashStyleAlias kgj  'kubectl get -o json --export @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 
+$nodesMap = (kg no -o jsonpath='{.items[*].metadata.name}').Split()
+
+function New-NodeTunnel {
+  [CmdletBinding()]
+  param (
+    [Parameter(Mandatory)]
+    [ArgumentCompleter( { @( $nodesMap -like $args[2] + '*') } )]
+    [ValidateScript( { $_ -in $nodesMap } )]
+    [string]$nodeName,
+    [Parameter(Mandatory = $false)]
+    [string]$image = "docker.io/library/alpine",
+    [Parameter(Mandatory = $false)]
+    [string]$podName = "nsenter-$(Get-Random -Minimum 100000 -Maximum 999999)"
+  )
+
+  $tempFile = New-TemporaryFile
+  @"
+apiVersion: v1
+kind: Pod
+metadata:
+    name: $podName
+    namespace: default
+spec:
+    nodeName: $nodeName
+    hostPID: true
+    containers:
+    - securityContext: 
+        privileged: true
+      image: $image
+      name: nsenter
+      stdin: true
+      stdinOnce: true
+      tty: true
+      command:
+      - "nsenter"
+      - "--target"
+      - "1"
+      - "--mount"
+      - "--uts"
+      - "--ipc"
+      - "--net"
+      - "--pid"
+      - "--"
+      - "bash"
+      - "-l"
+"@ > $tempFile.FullName
+
+  kubectl apply -f $tempFile.FullName
+  kubectl attach -n default $podName
+  kubectl delete pod -n default $podname
+  Remove-Item $tempFile.FullName
+}
+
 function gca {
     [CmdletBinding()]
     Param(
