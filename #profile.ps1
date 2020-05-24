@@ -83,14 +83,11 @@ New-BashStyleAlias kgj  'kubectl get -o json --export @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 
-$nodesMap = (kg no -o jsonpath='{.items[*].metadata.name}').Split()
-
 function New-NodeTunnel {
   [CmdletBinding()]
   param (
     [Parameter(Mandatory)]
-    [ArgumentCompleter( { @( $nodesMap -like $args[2] + '*') } )]
-    [ValidateScript( { $_ -in $nodesMap } )]
+    [ArgumentCompleter( { @( (kg no -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
     [string]$nodeName,
     [Parameter(Mandatory = $false)]
     [string]$image = "docker.io/library/alpine",
@@ -135,6 +132,7 @@ spec:
   kubectl delete pod -n default $podname
   Remove-Item $tempFile.FullName
 }
+
 
 function gca {
     [CmdletBinding()]
