@@ -1,3 +1,4 @@
+irm http://localhost:15000/logging -Method post
 kubectl run -it --rm --generator=run-pod/v1 aks-ssh --image=alpine --labels=app=aksssh
 
 # second terminal
