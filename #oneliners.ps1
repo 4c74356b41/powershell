@@ -42,3 +42,7 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 "@
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# degen group-object
+$skips = { "streak": 3, "game": 940 }
+( $skips | Group-Object streak )[x].group.foreach{}
