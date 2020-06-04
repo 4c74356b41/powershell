@@ -64,6 +64,8 @@ Set-Alias -Name i -Value istioctl
 New-Alias -Name ctj -Value ConvertTo-Json
 New-Alias -Name cfj -Value ConvertFrom-Json
 New-BashStyleAlias kk   'kubectl config @args'
+New-BashStyleAlias kkg  'kubectl config get-contexts @args'
+New-BashStyleAlias kks  'kubectl config set-context se@args'
 New-BashStyleAlias kd   'kubectl describe @args'
 New-BashStyleAlias ka   'kubectl apply -f @args'
 New-BashStyleAlias kr   'kubectl delete @args'
@@ -76,7 +78,7 @@ New-BashStyleAlias ks   'kubectl scale @args'
 New-BashStyleAlias kx   'kubectl exec @args'
 New-BashStyleAlias kxi  'kubectl exec -it @args'
 New-BashStyleAlias kt   'kubectl top @args'
-New-BashStyleAlias kta  'kubectl top --all-namespaces @args'
+New-BashStyleAlias kta  'kubectl top @args --all-namespaces'
 New-BashStyleAlias kg   'kubectl get @args'
 New-BashStyleAlias kgo  'kubectl get -o yaml --export @args'
 New-BashStyleAlias kgj  'kubectl get -o json --export @args'
