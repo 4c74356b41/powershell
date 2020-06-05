@@ -103,6 +103,7 @@ apiVersion: v1
 kind: Pod
 metadata:
     name: $podName
+    namespace: default
 spec:
     nodeName: $nodeName
     hostPID: true
