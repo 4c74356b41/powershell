@@ -158,9 +158,10 @@ function dcr {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
-        [string]$localPath
+        [string]$localPath,
+	[string]$image = "ci"
     )
-    docker run -it -v C:\_\${localPath}:/ci ci    
+    docker run -it -v C:\_\${localPath}:/ci $image
 }
 
 function develop-me() {
