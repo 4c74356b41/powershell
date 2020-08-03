@@ -86,17 +86,6 @@ New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 New-BashStyleAlias kapi 'kubectl api-resources @args'
 
-function kns {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory = $true)]
-	[ArgumentCompleter( { @( (kubectl get namespaces -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
-        [string]$namespace
-    )
-    kubectl config set-context (kubectl config current-context) --namespace $namespace
-    # kubectl config set-context (kubectl config  get-contexts | sls -Pattern '^\*\s+(\w+)').matches.groups[1].value --namespace $namespace
-}
-
 function New-NodeTunnel {
   [CmdletBinding()]
   param (
@@ -147,6 +136,16 @@ spec:
   Remove-Item $tempFile.FullName
 }
 
+function kns {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true)]
+	[ArgumentCompleter( { @( (kubectl get namespaces -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
+        [string]$namespace
+    )
+    kubectl config set-context (kubectl config current-context) --namespace $namespace
+    # kubectl config set-context (kubectl config  get-contexts | sls -Pattern '^\*\s+(\w+)').matches.groups[1].value --namespace $namespace
+}
 
 function gca {
     [CmdletBinding()]
@@ -245,6 +244,7 @@ function secret-me() {
 }
 
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
+function copy-last( $name ) { Set-Variable -Name $name -Value $lw.clone() }
 
-Import-Module posh-git,mvp; $GitPromptSettings.AfterText += "`n"; $ENV:FLUX_FORWARD_NAMESPACE="flux"
+Import-Module posh-git,mvp; $GitPromptSettings.AfterText += "`n"; $ENV:FLUX_FORWARD_NAMESPACE="flux"; $env:KUBE_EDITOR='code --wait'
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; cd "C:\_"; cls
