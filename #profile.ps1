@@ -85,6 +85,16 @@ New-BashStyleAlias kgj  'kubectl get -o json --export @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 
+function kns {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true)]
+	[ArgumentCompleter( { @( (kubectl get namespaces -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
+        [string]$namespace
+    )
+    kubectl config set-context (kubectl config  get-contexts | sls -Pattern '^\*\s+(\w+)').matches.groups[1].value --namespace $namespace
+}
+
 function New-NodeTunnel {
   [CmdletBinding()]
   param (
