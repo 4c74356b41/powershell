@@ -84,6 +84,7 @@ New-BashStyleAlias kgo  'kubectl get -o yaml --export @args'
 New-BashStyleAlias kgj  'kubectl get -o json --export @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
+New-BashStyleAlias kapi 'kubectl api-resources @args'
 
 function kns {
     [CmdletBinding()]
