@@ -58,11 +58,17 @@ function New-BashStyleAlias([string]$name, [string]$command) {
     New-Item "Function:\global:$name" -Value $sb | Out-Null
 }
 
+# tools
+Set-Alias -Name d -Value docker
 Set-Alias -Name k -Value kubectl
 Set-Alias -Name f -Value fluxctl
 Set-Alias -Name i -Value istioctl
+
+# pwsh internal
 New-Alias -Name ctj -Value ConvertTo-Json
 New-Alias -Name cfj -Value ConvertFrom-Json
+
+# kubectl
 New-BashStyleAlias kk   'kubectl config @args'
 New-BashStyleAlias kkg  'kubectl config get-contexts @args'
 New-BashStyleAlias kks  'kubectl config set-context se@args'
@@ -85,6 +91,12 @@ New-BashStyleAlias kgj  'kubectl get -o json --export @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 New-BashStyleAlias kapi 'kubectl api-resources @args'
+
+# docker
+function dsa($name) { docker start $name; docker attach $name }
+function dga() { docker ps -a }
+function dra() { docker rm $(docker ps -qa) }
+function dri($name) { docker rmi $name }
 
 function New-NodeTunnel {
   [CmdletBinding()]
