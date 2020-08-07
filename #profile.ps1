@@ -143,7 +143,7 @@ spec:
 "@ > $tempFile.FullName
 
   kubectl apply -f $tempFile.FullName
-  kubectl attach -n default $podName
+  kubectl attach -n default $podName -it
   kubectl delete pod -n default $podname
   Remove-Item $tempFile.FullName
 }
