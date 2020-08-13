@@ -97,6 +97,7 @@ function dsa($name) { docker start $name; docker attach $name }
 function dga() { docker ps -a }
 function dra() { docker rm $(docker ps -qa) }
 function dri($name) { docker rmi $name }
+function drx($image) { docker run -it --rm $image }
 
 function New-NodeTunnel {
   [CmdletBinding()]
