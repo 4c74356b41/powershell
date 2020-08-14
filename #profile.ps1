@@ -94,11 +94,11 @@ New-BashStyleAlias kapi 'kubectl api-resources @args'
 
 # docker
 function dxi($name) { docker start $name; docker attach $name }
+function dxr($image) { docker run -it --rm $image }
 function dga() { docker ps -a }
 function dgi() { docker images }
 function dra() { docker rm $(docker ps -qa) }
 function dri($name) { docker rmi $name }
-function drx($image) { docker run -it --rm $image }
 
 function New-NodeTunnel {
   [CmdletBinding()]
