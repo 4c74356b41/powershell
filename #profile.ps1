@@ -93,8 +93,9 @@ New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 New-BashStyleAlias kapi 'kubectl api-resources @args'
 
 # docker
-function dsa($name) { docker start $name; docker attach $name }
+function dxi($name) { docker start $name; docker attach $name }
 function dga() { docker ps -a }
+function dgi() { docker images }
 function dra() { docker rm $(docker ps -qa) }
 function dri($name) { docker rmi $name }
 function drx($image) { docker run -it --rm $image }
