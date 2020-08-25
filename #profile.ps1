@@ -260,5 +260,6 @@ function secret-me() {
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
 function copy-last( $name ) { Set-Variable -Name $name -Value $lw.clone() }
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Import-Module posh-git,mvp; $GitPromptSettings.AfterText += "`n"; $ENV:FLUX_FORWARD_NAMESPACE="flux"; $env:KUBE_EDITOR='code --wait'
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; cd "C:\_"; cls
