@@ -71,7 +71,7 @@ New-Alias -Name cfj -Value ConvertFrom-Json
 # kubectl
 New-BashStyleAlias kk   'kubectl config @args'
 New-BashStyleAlias kkg  'kubectl config get-contexts @args'
-New-BashStyleAlias kks  'kubectl config set-context se@args'
+New-BashStyleAlias kks  'kubectl config set-context @args'
 New-BashStyleAlias kd   'kubectl describe @args'
 New-BashStyleAlias ka   'kubectl apply -f @args'
 New-BashStyleAlias kr   'kubectl delete @args'
@@ -98,7 +98,8 @@ function dxr($image) { docker run -it --rm $image }
 function dga() { docker ps -a }
 function dgi() { docker images }
 function dra() { docker rm $(docker ps -qa) }
-function dri($name) { docker rmi $name }
+New-BashStyleAlias 'dri @args'
+New-BashStyleAlias 'dr @args'
 
 function New-NodeTunnel {
   [CmdletBinding()]
