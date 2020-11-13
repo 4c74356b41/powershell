@@ -93,11 +93,13 @@ New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 New-BashStyleAlias kapi 'kubectl api-resources @args'
 
 # docker
-function dxi($name) { docker start $name; docker attach $name }
-function dxr($image) { docker run -it --rm $image }
+function dsa($name) { docker start $name; docker attach $name }
+function drr($image) { docker run -it --rm $image }
 function dga() { docker ps -a }
 function dgi() { docker images }
 function dra() { docker rm $(docker ps -qa) }
+function dxi($image) { docker run -it $image bash }
+function dxe($image) { docker run -d --entrypoint '/bin/bash' $image -c 'sleep 1000000' }
 New-BashStyleAlias 'dri @args'
 New-BashStyleAlias 'dr @args'
 
