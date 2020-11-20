@@ -162,6 +162,20 @@ spec:
   Remove-Item $tempFile.FullName
 }
 
+function Sleep-Container ($targetName, $targetType) {
+    $targetJson = kubectl get $targetType $targetName -o json | ConvertFrom-Json
+    $tempFile = New-TemporaryFile
+    "spec:
+      template:
+        spec:
+          containers:
+          - name: $($targetJson.spec.template.spec.containers[0].name)
+            command: ['sh','-c','sleep 10000s']" > $tempFile.FullName
+    
+    kubectl patch $targetType $targetName -p (Get-Content -Raw $tempFile.FullName)
+    Remove-Item $tempFile
+}
+
 function kns {
     [CmdletBinding()]
     Param(
