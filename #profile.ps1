@@ -1,3 +1,12 @@
+Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -ScriptBlock {
+    param($key, $arg)
+    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(0)
+}
+Set-PSReadLineKeyHandler -Chord 'Ctrl+e' -ScriptBlock {
+    param($key, $arg)
+    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(1000000)
+}
+
 function contribute-me {
     [CmdletBinding()]
     Param(
