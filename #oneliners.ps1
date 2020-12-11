@@ -1,13 +1,13 @@
 # initial setup
 set-executionpolicy unrestricted
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install -y kubernetes-cli kubernetes-helm istioctl openshift-cli fluxctl
+choco install -y kubernetes-cli kubernetes-helm istioctl openshift-cli fluxctl stern
 choco install -y git 7zip vscode vlc microsoft-teams slack telegram
 if (!(Invoke-RestMethod -Headers @{"Metadata"="true"} 'http://169.254.169.254/metadata/instance?api-version=2018-10-01')) {
     choco install -y docker-desktop
 }
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-install-module posh-git,mvp,az,az.resourcegraph
+install-module posh-git,mvp,az,az.resourcegraph,psreadline
 git config --global user.email "core@4c74356b41.com"
 git config --global user.name "Gleb Boushev"
 git config --global core.eol lf
