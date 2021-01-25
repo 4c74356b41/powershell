@@ -162,6 +162,16 @@ spec:
   Remove-Item $tempFile.FullName
 }
 
+function Get-HelmReleaseData ( $releaseName ) {
+    $tempFile = ( New-TemporaryFile ).FullName
+    $data = kubectl get secrets $releaseName -o jsonpath='{.data.release}'
+    [System.IO.File]::WriteAllLines($tempFile, $data, (New-Object System.Text.UTF8Encoding $False))
+
+    $dockerArgs = "run", "-it", "--rm", "--entrypoint", "bash", "-v", "${tempFile}:/raw", "debian:buster-slim", "-c", "base64 -d raw | base64 -d | gzip -d"
+    $content = docker $dockerArgs | Select-Object -Skip 1
+    ( $content | ConvertFrom-Json ).manifest
+}
+
 function Sleep-Container ($targetName, $targetType) {
     $targetJson = kubectl get $targetType $targetName -o json | ConvertFrom-Json
     $tempFile = New-TemporaryFile
