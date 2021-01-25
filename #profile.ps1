@@ -162,6 +162,7 @@ spec:
   Remove-Item $tempFile.FullName
 }
 
+# https://gist.github.com/DzeryCZ/c4adf39d4a1a99ae6e594a183628eaee
 function Get-HelmReleaseData ( $releaseName ) {
     $tempFile = ( New-TemporaryFile ).FullName
     $data = kubectl get secrets $releaseName -o jsonpath='{.data.release}'
