@@ -171,6 +171,7 @@ function Get-HelmReleaseData ( $releaseName ) {
     $dockerArgs = "run", "-it", "--rm", "--entrypoint", "bash", "-v", "${tempFile}:/raw", "debian:buster-slim", "-c", "base64 -d raw | base64 -d | gzip -d"
     $content = docker $dockerArgs | Select-Object -Skip 1
     ( $content | ConvertFrom-Json ).manifest
+    Remove-Item $tempFile
 }
 
 function Sleep-Container ($targetName, $targetType) {
