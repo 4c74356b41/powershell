@@ -275,6 +275,11 @@ function timestamp-me {
     $result.value.createdTime
 }
 
+function get-work-hours() {
+    $now = Get-Date
+    (1..[DateTime]::DaysInMonth($now.Year, $now.Month)).where{( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8
+}
+
 function azure-me() {
     $cred = [pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force))
     Add-AzAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN -Credential $cred
