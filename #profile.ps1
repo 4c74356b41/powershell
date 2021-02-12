@@ -103,14 +103,13 @@ New-BashStyleAlias kapi 'kubectl api-resources @args'
 
 # docker
 function dsa($name) { docker start $name; docker attach $name }
-function drr($image) { docker run -it --rm $image }
-function dga() { docker ps -a }
 function dgi() { docker images }
+function dga() { docker ps -a }
 function dra() { docker rm $(docker ps -qa) }
-function dxi($image) { docker run -it $image bash }
-function dxe($image) { docker run -d --entrypoint '/bin/bash' $image -c 'sleep 1000000' }
-New-BashStyleAlias 'dri @args'
-New-BashStyleAlias 'dr @args'
+function dxi($image) { docker run --rm -it $image bash }
+function dxe($image) { docker run --rm -d --entrypoint '/bin/bash' $image -c 'sleep 1000000' }
+New-BashStyleAlias dr  'docker rm @args'
+New-BashStyleAlias dri 'docker rmi @args'
 
 function New-NodeTunnel {
   [CmdletBinding()]
@@ -173,6 +172,13 @@ function Get-HelmReleaseData ( $releaseName ) {
     ( $content | ConvertFrom-Json ).manifest
     
     Remove-Item $tempFile
+}
+
+function Get-SecretData ( $secretName ) {
+    $secret = kubectl get secret -o json $secretName | ConvertFrom-Json
+    $secret.data.PSObject.Properties.foreach{
+        @{ $PSItem.Name = [System.Text.Encoding]::UTF8.GetString( [System.Convert]::FromBase64String( $PSItem.Value ) ) }
+    }
 }
 
 function Sleep-Container ($targetName, $targetType) {
