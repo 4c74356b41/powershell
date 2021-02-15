@@ -198,6 +198,14 @@ function timestamp-me {
 }
 
 # miscellaneous
+Import-Module posh-git,mvp
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
+$GitPromptSettings.AfterText += "`n"
+$ENV:FLUX_FORWARD_NAMESPACE="flux"
+Set-Location "$home\onedrive\_git"
+$env:KUBE_EDITOR='code --wait'
+
 function commit-me {
     Param(
         [Parameter(Mandatory = $true)]
@@ -219,12 +227,4 @@ function workhour-me {
     $now = Get-Date
     (1..[DateTime]::DaysInMonth($now.Year, $now.Month)).where{( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8
 }
-
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
-$GitPromptSettings.AfterText += "`n"
-$ENV:FLUX_FORWARD_NAMESPACE="flux"
-Set-Location "$home\onedrive\_git"
-$env:KUBE_EDITOR='code --wait'
-Import-Module posh-git,mvp
 Clear-Host
