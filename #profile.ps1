@@ -1,3 +1,13 @@
+# pwsh
+function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
+function copy-me( $name ) { Set-Variable -Name $name -Value $lw.clone() }
+New-Alias -Name ctj -Value ConvertTo-Json
+New-Alias -Name cfj -Value ConvertFrom-Json
+New-Alias -Name d -Value docker
+New-Alias -Name k -Value kubectl
+New-Alias -Name f -Value fluxctl
+New-Alias -Name i -Value istioctl
+
 Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -ScriptBlock {
     param($key, $arg)
     [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(0)
@@ -6,81 +16,34 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+e' -ScriptBlock {
     param($key, $arg)
     [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(1000000)
 }
-
-function contribute-me {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [validateset('Article','Blog/Website Post','Book (Author)','Book (Co-Author)','Conference (Staffing)','Docs.Microsoft.com Contribution','Forum Moderator','Forum Participation (3rd Party forums)','Forum Participation (Microsoft Forums)','Mentorship','Microsoft Open Source Projects','Non-Microsoft Open Source Projects','Organizer (User Group/Meetup/Local Events)','Organizer of Conference','Other','Product Group Feedback','Sample Code/Projects/Tools','Site Owner','Speaking (Conference)','Speaking (User Group/Meetup/Local events)','Technical Social Media (Twitter, Facebook, LinkedIn...)','Translation Review, Feedback and Editing','Video/Webcast/Podcast','Workshop/Volunteer/Proctor')]
-        [string]$contribution,
-
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-        [string]$description,
-
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-        [int]$quantity = 1,
-
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [string]$reach,
-        
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [validateset('ARM & DevOps on Azure (Chef, Puppet, Salt, Ansible, Dev/Test Lab)','Azure App Service','Azure Backup & Recovery','Azure Blockchain','Azure Compute (VM, VMSS, HPC/Batch, Cloud Services)','Azure Container Services (Docker, Windows Server)','Azure IoT','Azure Networking','Azure Security and Compliance','Azure Service Fabric','Azure Stack','Azure Storage','Enterprise Integration','SDK support on Azure (.NET, Node.js, Java, PHP, Python, GO, Ruby)')]
-        [string]$technology = 'ARM & DevOps on Azure (Chef, Puppet, Salt, Ansible, Dev/Test Lab)',
-        
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [string]$title,
-        
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
-        [string]$url,
-
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-        [validateset('Microsoft', 'MVP Community', 'Everyone', 'Microsoft Only')]
-        [string]$visibility = 'Everyone',
-
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true)]
-        [datetime]$when = (Get-Date)
-    )
-    
-    if (!(Get-MVPProfile)) {
-	Set-MVPConfiguration -SubscriptionKey (Get-AzKeyVaultSecret -VaultName vaulty -Name mvp-api-subscription-key).secretvaluetext
-    }
-    $splat = @{
-        StartDate              = $when
-        Title                  = $title
-        Description            = $description
-        ReferenceUrl           = $url
-        AnnualQuantity         = $quantity
-        AnnualReach            = $reach
-        Visibility             = $visibility
-        ContributionType       = $contribution
-        ContributionTechnology = $technology
-    }
-    New-MVPContribution @splat
-}
-
-function bloh-me([string]$title, [string]$tags) {
-    docker run --rm -it -v 'C:/_/bloh:/tmp/jinja' python:3.6-jessie /bin/bash -c "cd /tmp/jinja/ && pip install -r requirements.txt && python new_post.py -t '$title' -s '$tags'"
-}
-
 function New-BashStyleAlias([string]$name, [string]$command) {
     $sb = [scriptblock]::Create($command)
     New-Item "Function:\global:$name" -Value $sb | Out-Null
 }
 
-# tools
-Set-Alias -Name d -Value docker
-Set-Alias -Name k -Value kubectl
-Set-Alias -Name f -Value fluxctl
-Set-Alias -Name i -Value istioctl
+# docker
+New-BashStyleAlias dr  'docker rm @args'
+New-BashStyleAlias dri 'docker rmi @args'
+function dsa($name) { docker start $name; docker attach $name }
+function dgi() { docker images }
+function dga() { docker ps -a }
+function dra() { docker rm $(docker ps -qa) }
+function dxi($image) { docker run --rm -it $image bash }
+function dxe($image) { docker run --rm -d --entrypoint '/bin/bash' $image -c 'sleep 1000000' }
+function dcr {
+    Param(
+        [Parameter(Mandatory=$true)]
+        [string]$localPath,
+	[string]$image = "ci"
+    )
+    docker run -it -v C:\_\${localPath}:/ci $image
+}
 
-# pwsh internal
-New-Alias -Name ctj -Value ConvertTo-Json
-New-Alias -Name cfj -Value ConvertFrom-Json
-
-# kubectl
+# kubernetes
 New-BashStyleAlias kk   'kubectl config @args'
 New-BashStyleAlias kkg  'kubectl config get-contexts @args'
 New-BashStyleAlias kks  'kubectl config set-context @args'
+New-BashStyleAlias kku  'kubectl config use-context @args'
 New-BashStyleAlias kd   'kubectl describe @args'
 New-BashStyleAlias ka   'kubectl apply -f @args'
 New-BashStyleAlias kr   'kubectl delete @args'
@@ -100,19 +63,16 @@ New-BashStyleAlias kgj  'kubectl get -o json @args'
 New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 New-BashStyleAlias kapi 'kubectl api-resources @args'
+function kns {
+    Param(
+        [Parameter(Mandatory = $true)]
+	[ArgumentCompleter( { @( (kubectl get namespaces -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
+        [string]$namespace
+    )
+    kubectl config set-context (kubectl config current-context) --namespace $namespace
+}
 
-# docker
-function dsa($name) { docker start $name; docker attach $name }
-function dgi() { docker images }
-function dga() { docker ps -a }
-function dra() { docker rm $(docker ps -qa) }
-function dxi($image) { docker run --rm -it $image bash }
-function dxe($image) { docker run --rm -d --entrypoint '/bin/bash' $image -c 'sleep 1000000' }
-New-BashStyleAlias dr  'docker rm @args'
-New-BashStyleAlias dri 'docker rmi @args'
-
-function New-NodeTunnel {
-  [CmdletBinding()]
+function node-me {
   param (
     [Parameter(Mandatory)]
     [ArgumentCompleter( { @( (kg no -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
@@ -162,7 +122,7 @@ spec:
 }
 
 # https://gist.github.com/DzeryCZ/c4adf39d4a1a99ae6e594a183628eaee
-function Get-HelmReleaseData ( $releaseName ) {
+function helm-me ( $releaseName ) {
     $tempFile = ( New-TemporaryFile ).FullName
     $data = kubectl get secrets $releaseName -o jsonpath='{.data.release}'
     [System.IO.File]::WriteAllLines($tempFile, $data, (New-Object System.Text.UTF8Encoding $False))
@@ -174,14 +134,14 @@ function Get-HelmReleaseData ( $releaseName ) {
     Remove-Item $tempFile
 }
 
-function Get-SecretData ( $secretName ) {
+function secret-me ( $secretName ) {
     $secret = kubectl get secret -o json $secretName | ConvertFrom-Json
     $secret.data.PSObject.Properties.foreach{
         @{ $PSItem.Name = [System.Text.Encoding]::UTF8.GetString( [System.Convert]::FromBase64String( $PSItem.Value ) ) }
     }
 }
 
-function Sleep-Container ($targetName, $targetType) {
+function suspend-me ($targetName, $targetType) {
     $targetJson = kubectl get $targetType $targetName -o json | ConvertFrom-Json
     $tempFile = New-TemporaryFile
     "spec:
@@ -195,51 +155,7 @@ function Sleep-Container ($targetName, $targetType) {
     Remove-Item $tempFile
 }
 
-function kns {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory = $true)]
-	[ArgumentCompleter( { @( (kubectl get namespaces -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
-        [string]$namespace
-    )
-    kubectl config set-context (kubectl config current-context) --namespace $namespace
-    # kubectl config set-context (kubectl config  get-contexts | sls -Pattern '^\*\s+(\w+)').matches.groups[1].value --namespace $namespace
-}
-
-function gca {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory = $true)]
-        [string]$workItemId,
-        [Parameter(Mandatory = $true)]
-        [string]$commitMessage,
-	[switch]$commitAll
-    )
-    $commitMessage = '#{0}: {1}' -f $workItemId, $commitMessage
-    if ($commitAll.IsPresent) {
-        git add -A
-    } else {
-        git add -u
-    }
-    git commit -m $commitMessage
-}
-
-function dcr {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory=$true)]
-        [string]$localPath,
-	[string]$image = "ci"
-    )
-    docker run -it -v C:\_\${localPath}:/ci $image
-}
-
-function develop-me() {
-    if ( !$automationSecret ) { $automationSecret = $env:autoKey }
-    $webhook = "https://s1events.azure-automation.net/webhooks?token=$automationSecret"
-    Invoke-RestMethod -Method Post -Uri $webhook -Body ( @{ tada = (irm httpbin.org/ip).origin } | ConvertTo-Json )
-}
-
+# azure
 function token-me {
     $azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
     if (!$azProfile.Accounts.Count) {
@@ -281,35 +197,34 @@ function timestamp-me {
     $result.value.createdTime
 }
 
-function get-work-hours() {
+# miscellaneous
+function commit-me {
+    Param(
+        [Parameter(Mandatory = $true)]
+        [string]$workItemId,
+        [Parameter(Mandatory = $true)]
+        [string]$commitMessage,
+	[switch]$commitAll
+    )
+    $commitMessage = '#{0}: {1}' -f $workItemId, $commitMessage
+    if ($commitAll.IsPresent) {
+        git add -A
+    } else {
+        git add -u
+    }
+    git commit -m $commitMessage
+}
+
+function workhour-me {
     $now = Get-Date
     (1..[DateTime]::DaysInMonth($now.Year, $now.Month)).where{( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8
 }
 
-function azure-me() {
-    $cred = [pscredential]::new($env:AZURE_CLIENT_ID,(ConvertTo-SecureString -String $env:AZURE_CLIENT_SECRET -AsPlainText -Force))
-    Add-AzAccount -TenantId $env:AZURE_TENANT_ID -ServicePrincipal -SubscriptionName MSDN -Credential $cred
-}
-
-function pulumi-me-mi-me-mi-me-mi() {
-    azure-me
-    $env:ARM_CLIENT_ID=$ENV:AZURE_CLIENT_ID
-    $env:ARM_TENANT_ID=$ENV:AZURE_TENANT_ID
-    $env:ARM_SUBSCRIPTION_ID=(Get-AzContext).Subscription.Id
-    $env:ARM_CLIENT_SECRET=$ENV:AZURE_CLIENT_SECRET
-}
-
-function secret-me() {
-    Enable-AzContextAutosave
-    [Environment]::SetEnvironmentVariable("AZURE_TENANT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureTenantID).secretvaluetext, "User")
-    [Environment]::SetEnvironmentVariable("AZURE_CLIENT_ID", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientID).secretvaluetext, "User")
-    [Environment]::SetEnvironmentVariable("AZURE_CLIENT_SECRET", (Get-AzKeyVaultSecret -VaultName vaulty -Name azureClientSecret).secretvaluetext, "User")
-    [Environment]::SetEnvironmentVariable("autoKey", (Get-AzKeyVaultSecret -VaultName vaulty -Name autoKey).secretvaluetext, "User")
-}
-
-function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
-function copy-last( $name ) { Set-Variable -Name $name -Value $lw.clone() }
-
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Import-Module posh-git,mvp; $GitPromptSettings.AfterText += "`n"; $ENV:FLUX_FORWARD_NAMESPACE="flux"; $env:KUBE_EDITOR='code --wait'
-$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"; cd "C:\_"; cls
+$PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
+$GitPromptSettings.AfterText += "`n"
+$ENV:FLUX_FORWARD_NAMESPACE="flux"
+Set-Location "$home\onedrive\_git"
+$env:KUBE_EDITOR='code --wait'
+Import-Module posh-git,mvp
+Clear-Host
