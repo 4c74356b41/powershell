@@ -141,7 +141,7 @@ function secret-me ( $secretName ) {
     }
 }
 
-function suspend-me ($targetName, $targetType) {
+function suspend-me ( $targetName, $targetType ) {
     $targetJson = kubectl get $targetType $targetName -o json | ConvertFrom-Json
     $tempFile = New-TemporaryFile
     "spec:
@@ -151,21 +151,21 @@ function suspend-me ($targetName, $targetType) {
           - name: $($targetJson.spec.template.spec.containers[0].name)
             command: ['sh','-c','sleep 10000s']" > $tempFile.FullName
     
-    kubectl patch $targetType $targetName -p (Get-Content -Raw $tempFile.FullName)
+    kubectl patch $targetType $targetName -p ( Get-Content -Raw $tempFile.FullName )
     Remove-Item $tempFile
 }
 
 # azure
 function token-me {
     $azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-    if (!$azProfile.Accounts.Count) {
+    if ( -not $azProfile.Accounts.Count ) {
         Throw "Ensure you have logged in before calling this function."    
     }
   
-    $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient($azProfile)
-    $token = $profileClient.AcquireAccessToken((Get-AzContext).Tenant.TenantId)
+    $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient( $azProfile )
+    $token = $profileClient.AcquireAccessToken( ( Get-AzContext ).Tenant.TenantId )
 
-    if (!$token.AccessToken) {
+    if ( -not $token.AccessToken ) {
         Throw "No Token"
     }
     @{ Authorization = "Bearer {0}" -f $token.AccessToken }
@@ -175,9 +175,7 @@ function timestamp-me {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
-        [string]$resourceId,
-        [Parameter(Mandatory=$false)]
-        [int]$timeRange = 72
+        [string]$resourceId
     )
 
     $arr = $resourceId -split '/'
@@ -189,9 +187,9 @@ function timestamp-me {
     $apiVersion = $apiVersions.where{ $_.ResourceTypeName -eq $arr[7] }.ApiVersions | Select-Object -First 1
 
     $Uri = "https://management.azure.com/subscriptions/{0}/resources?`$filter=name eq '{1}' and resourceType eq '{2}'&`$expand=createdTime&api-version={3}"
-    $result = Invoke-RestMethod -Headers (token-me) -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
+    $result = Invoke-RestMethod -Headers ( token-me ) -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
 
-    if(!$result.value.createdTime) {
+    if( -not $result.value.createdTime ) {
        Throw "No 'CreatedTime' property"
     }
     $result.value.createdTime
@@ -215,7 +213,7 @@ function commit-me {
 	[switch]$commitAll
     )
     $commitMessage = '#{0}: {1}' -f $workItemId, $commitMessage
-    if ($commitAll.IsPresent) {
+    if ( $commitAll.IsPresent ) {
         git add -A
     } else {
         git add -u
@@ -225,6 +223,7 @@ function commit-me {
 
 function workhour-me {
     $now = Get-Date
-    (1..[DateTime]::DaysInMonth($now.Year, $now.Month)).where{( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8
+    ( 1..[DateTime]::DaysInMonth( $now.Year, $now.Month) ).where{
+        ( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8
 }
 Clear-Host
