@@ -72,6 +72,10 @@ function kns {
     kubectl config set-context (kubectl config current-context) --namespace $namespace
 }
 
+function istio-me {
+  Invoke-RestMethod "http://localhost:15000/logging?level=debug" -Method:Post
+}
+
 function node-me {
   param (
     [Parameter(Mandatory)]
