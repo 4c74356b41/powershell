@@ -1,6 +1,6 @@
 # pwsh
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
-function copy-me( $name ) { Set-Variable -Name $name -Value $lw.clone() }
+function copy-me( $name ) { New-Variable -Name $name -Value $lw.clone() }
 New-Alias -Name ctj -Value ConvertTo-Json
 New-Alias -Name cfj -Value ConvertFrom-Json
 New-Alias -Name d -Value docker
