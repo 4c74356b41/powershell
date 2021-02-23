@@ -14,6 +14,9 @@ git config --global core.eol lf
 git config --global core.autocrlf input
 'Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1")' > $profile
 
+# uBlock
+linkedin.com##span:has-text(Promoted):upward(6)
+
 #creds\session
 [Runtime.InteropServices.Marshal]::PtrToStringAuto;[Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)
 (Get-Credential).Password | ConvertFrom-SecureString | Out-File -FilePath blabla.cred
