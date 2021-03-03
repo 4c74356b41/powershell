@@ -72,8 +72,31 @@ function kns {
     kubectl config set-context (kubectl config current-context) --namespace $namespace
 }
 
-function istio-me {
+function istio-debug-me {
+  $job = istio-gateway-pf-me
   Invoke-RestMethod "http://localhost:15000/logging?level=debug" -Method:Post
+  $job | Remove-Job -Force
+}
+
+function istio-gateway-me {
+  kubectl get pods --namespace istio-system --selector app=istio-ingressgateway -oname | Get-Random
+}
+
+function istio-gateway-pf-me {
+    Start-Job -ScriptBlock { 
+      kubectl port-forward $args[0] --namespace istio-system 15000
+    } -ArgumentList $( istio-gateway-me )
+}
+
+function istio-gateway-config-me {
+  $job = istio-gateway-pf-me
+  $json = Invoke-WebRequest -UseBasicParsing http://localhost:15000/config_dump
+  $json.content | Set-Clipboard
+  $job | Remove-Job -Force
+}
+
+function istio-gateway-log-me {
+  kubectl logs $( istio-gateway-me ) -n istio-system -f --since=1s istio-proxy
 }
 
 function node-me {
