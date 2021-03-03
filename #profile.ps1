@@ -73,6 +73,11 @@ function kns {
 }
 
 function istio-debug-me {
+  @'
+global.proxy.accessLogFile: "/dev/stdout"	
+global.proxy.accessLogFormat: ""
+global.proxy.accessLogEncoding: JSON
+'@
   $job = istio-gateway-pf-me
   Invoke-RestMethod "http://localhost:15000/logging?level=debug" -Method:Post
   $job | Remove-Job -Force
