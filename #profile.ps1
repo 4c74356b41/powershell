@@ -254,9 +254,10 @@ function commit-me {
     git commit -m $commitMessage
 }
 
-function workhour-me {
+function workhour-me ([switch]$previous, $modifier = 1) {
     $now = Get-Date
-    ( 1..[DateTime]::DaysInMonth( $now.Year, $now.Month) ).where{
-        ( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8
+    $month = if ( $previous.isPresent ) { $now.Month - 1 } else { $now.Month }
+    ( 1..[DateTime]::DaysInMonth( $now.Year, $month) ).where{
+        ( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8 * $modifier
 }
 Clear-Host
