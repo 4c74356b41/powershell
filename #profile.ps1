@@ -148,7 +148,8 @@ spec:
 "@ > $tempFile.FullName
 
   kubectl apply -f $tempFile.FullName
-  kubectl wait --for=condition=ready pod $podName
+  # kubectl wait --for=condition=ready pod $podName
+  sleep 15
   kubectl attach -n default $podName -it
   kubectl delete pod -n default $podname
   Remove-Item $tempFile.FullName
