@@ -261,4 +261,9 @@ function workhour-me ([switch]$previous, $modifier = 1) {
     ( 1..[DateTime]::DaysInMonth( $now.Year, $month) ).where{
         ( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8 * $modifier
 }
+function base64-file-me ($b64, $filename) {
+    $bytes = [Convert]::FromBase64String($b64)
+    [IO.File]::WriteAllBytes($filename, $bytes)
+}
+
 Clear-Host
