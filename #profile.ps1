@@ -190,6 +190,10 @@ function suspend-me ( $targetName, $targetType ) {
 }
 
 # azure
+New-Alias -Name nrg -Value New-AzResourceGroup
+New-Alias -Name sld -Value New-AzDeployment
+New-Alias -Name rgd -Value New-AzResourceGroupDeployment
+
 function token-me {
     $azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
     if ( -not $azProfile.Accounts.Count ) {
