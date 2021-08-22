@@ -7,7 +7,7 @@ if (!(Invoke-RestMethod -Headers @{"Metadata"="true"} 'http://169.254.169.254/me
     choco install -y docker-desktop
 }
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-install-module posh-git,mvp,az,az.resourcegraph,psreadline
+install-module posh-git,mvp,az,az.resourcegraph,az.websites,psreadline
 git config --global user.email "core@4c74356b41.com"
 git config --global user.name "Gleb Boushev"
 git config --global core.eol lf
