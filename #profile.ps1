@@ -256,6 +256,10 @@ $ENV:FLUX_FORWARD_NAMESPACE="flux"
 Set-Location "$home\onedrive\_git"
 $env:KUBE_EDITOR='code --wait'
 
+New-BashStyleAlias gc 'git commit @args'
+New-BashStyleAlias gp 'git pull --ff-only @args'
+New-BashStyleAlias gfa 'git fetch --all --prune @args'
+
 function commit-me {
     Param(
         [Parameter(Mandatory = $true)]
