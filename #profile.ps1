@@ -248,7 +248,7 @@ function timestamp-me {
 }
 
 # miscellaneous
-Import-Module posh-git,mvp
+Import-Module posh-git
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
 $GitPromptSettings.AfterText += "`n"
