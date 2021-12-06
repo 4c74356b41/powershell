@@ -251,7 +251,6 @@ function timestamp-me {
 Import-Module posh-git
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
-$GitPromptSettings.AfterText += "`n"
 $ENV:FLUX_FORWARD_NAMESPACE="flux"
 Set-Location "$home\onedrive\_git"
 $env:KUBE_EDITOR='code --wait'
