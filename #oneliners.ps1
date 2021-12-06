@@ -6,9 +6,6 @@ choco install -y git 7zip vscode slack telegram
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 install-module posh-git,az,az.resourcegraph,az.websites,psreadline
 import-module posh-git
-$GitPromptSettings.DefaultPromptSuffix.Text = ""
-$GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
-$GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
 git config --global user.email "core@4c74356b41.com"
 git config --global user.name "Gleb Boushev"
 git config --global core.eol lf
