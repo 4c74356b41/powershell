@@ -255,7 +255,7 @@ $env:FLUX_FORWARD_NAMESPACE="flux"
 $env:KUBE_EDITOR='code --wait'
 $GitPromptSettings.DefaultPromptSuffix.Text = ""
 $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
-$GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "~\\onedrive\\_git","~" )'
+$GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\\Users\\core\\onedrive\\_git","~" )'
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
 New-BashStyleAlias gc 'git commit @args'
 New-BashStyleAlias gpf 'git pull --ff-only @args'
