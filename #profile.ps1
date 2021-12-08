@@ -291,5 +291,8 @@ function base64-file-me ($b64, $filename) {
     $bytes = [Convert]::FromBase64String($b64)
     [IO.File]::WriteAllBytes("$pwd/$filename", $bytes)
 }
+function hosts-me {
+    code C:\Windows\System32\drivers\etc\hosts
+}
 
 Clear-Host
