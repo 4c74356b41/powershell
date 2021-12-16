@@ -251,11 +251,12 @@ function timestamp-me {
 Set-Location "$home\onedrive\_git"
 Import-Module posh-git
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$env:FLUX_FORWARD_NAMESPACE="flux"
-$env:KUBE_EDITOR='code --wait'
+$env:FLUX_FORWARD_NAMESPACE = "flux"
+$env:KUBE_EDITOR = 'code --wait'
 $GitPromptSettings.DefaultPromptSuffix.Text = ""
 $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
 $GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\\Users\\core\\onedrive\\_git","~" )'
+$GitPromptSettings.DefaultPromptAbbreviateGitDirectory = $true
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
 New-BashStyleAlias gtc 'git commit @args'
 New-BashStyleAlias gpf 'git pull --ff-only @args'
