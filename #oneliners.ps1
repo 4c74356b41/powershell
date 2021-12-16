@@ -4,7 +4,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/in
 choco install -y kubernetes-cli kubernetes-helm istioctl openshift-cli fluxctl stern bicep
 choco install -y git 7zip vscode slack telegram
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-install-module posh-git,az,az.resourcegraph,az.websites,psreadline
+install-module posh-git,az,az.resourcegraph,az.websites,az.managedserviceidentity,psreadline
 import-module posh-git
 git config --global user.email "core@4c74356b41.com"
 git config --global user.name "Gleb Boushev"
