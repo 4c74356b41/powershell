@@ -258,7 +258,7 @@ $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
 $GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\\Users\\core\\onedrive\\_git","~" )'
 $GitPromptSettings.DefaultPromptAbbreviateGitDirectory = $true
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
-New-BashStyleAlias gtc 'git commit @args'
+New-BashStyleAlias gtc 'git commit -am @args'
 New-BashStyleAlias gpf 'git pull --ff-only @args'
 New-BashStyleAlias gfa 'git fetch --all --prune @args'
 New-BashStyleAlias gba 'git branch -a @args'
