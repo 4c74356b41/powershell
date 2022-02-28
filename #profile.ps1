@@ -281,11 +281,11 @@ function commit-me {
     git commit -m $commitMessage
 }
 
-function workhour-me ([switch]$previous, $modifier = 1) {
+function workhour-me ([int]$offset, $modifier = 1) {
     $now = Get-Date
-    $month = if ( $previous.isPresent ) { $now.Month - 1 } else { $now.Month }
+    $month = $now.Month + $offset
     ( 1..[DateTime]::DaysInMonth( $now.Year, $month) ).where{
-        ( Get-Date -Day $_ ).DayOfWeek -in 1..5 }.count * 8 * $modifier
+        ( Get-Date -Day $_ -Month $month ).DayOfWeek -in 1..5 }.count * 8 * $modifier
 }
 function base64-file-me ($b64, $filename) {
     if ( [string]::IsNullOrEmpty($filename) ) {
