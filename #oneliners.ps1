@@ -12,6 +12,7 @@ git config --global core.eol lf
 git config --global core.autocrlf input
 'Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1")' > $profile
 # https://docs.microsoft.com/en-us/windows/terminal/customize-settings/interaction#word-delimiters
+(Get-PSReadlineOption).HistorySavePath
 
 # uBlock
 linkedin.com##span:has-text(Promoted):upward(6)
