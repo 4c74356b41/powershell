@@ -1,8 +1,9 @@
 # initial setup
 set-executionpolicy unrestricted
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install -y kubernetes-cli kubernetes-helm istioctl openshift-cli fluxctl stern bicep
+choco install -y kubernetes-cli kubernetes-helm istioctl fluxctl stern bicep
 choco install -y git 7zip vscode slack telegram
+choco install anydesk.portable --params="'/install'"
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 install-module posh-git,az,az.resourcegraph,az.websites,az.managedserviceidentity,psreadline
 import-module posh-git
