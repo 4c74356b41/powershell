@@ -20,16 +20,15 @@ git config --global core.autocrlf input
 # https://docs.microsoft.com/en-us/windows/terminal/customize-settings/interaction#word-delimiters
 (Get-PSReadlineOption).HistorySavePath
 
-#creds\session
-[Runtime.InteropServices.Marshal]::PtrToStringAuto;[Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)
-(Get-Credential).Password | ConvertFrom-SecureString | Out-File -FilePath blabla.cred
-$cred = New-Object System.Management.Automation.PsCredential "dom\usr",( Get-Content blabla.cred | ConvertTo-SecureString )
-$cred = [pscredential]::new('administrator',(ConvertTo-SecureString -String '!Q2w3e4r' -AsPlainText -Force))
-
 # misc
-([adsi]"WinNT://./Administrators,group").Add("WinNT://DOMAIN/grpname,group") #username,user
+$cred = [pscredential]::new('administrator',(ConvertTo-SecureString -String '!Q2w3e4r' -AsPlainText -Force))
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "machineA,machineB" # "*"
-Invoke-WmiMethod -Class win32_process -name Create -ComputerName dflt -Credential $cred -ArgumentList "powershell.exe -noprofile -noninteractive -executionpolicy bypass -encodedCommand "
+Invoke-WmiMethod `
+    -Class win32_process `
+    -name Create `
+    -ComputerName dflt `
+    -Credential $cred `
+    -ArgumentList "powershell.exe -noprofile -noninteractive -executionpolicy bypass -encodedCommand "
 
 # ssl stuff
 add-type @"
