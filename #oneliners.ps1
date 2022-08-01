@@ -1,12 +1,17 @@
 # initial setup
 set-executionpolicy unrestricted
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install -y kubernetes-cli kubernetes-helm istioctl fluxctl stern bicep
-choco install -y git 7zip vscode slack telegram
+choco install -y kubernetes-cli kubernetes-helm stern bicep
+choco install -y git 7zip vscode telegram
+choco install -y slack istioctl fluxctl
 choco install anydesk.portable --params="'/install'"
-Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Install-PackageProvider -Name NuGet
+Register-PSRepository -Default
 install-module posh-git,az,az.resourcegraph,az.websites,az.managedserviceidentity,psreadline
 import-module posh-git
+
 git config --global user.email "core@4c74356b41.com"
 git config --global user.name "Gleb Boushev"
 git config --global core.eol lf
@@ -14,9 +19,6 @@ git config --global core.autocrlf input
 'Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1")' > $profile
 # https://docs.microsoft.com/en-us/windows/terminal/customize-settings/interaction#word-delimiters
 (Get-PSReadlineOption).HistorySavePath
-
-# uBlock
-linkedin.com##span:has-text(Promoted):upward(6)
 
 #creds\session
 [Runtime.InteropServices.Marshal]::PtrToStringAuto;[Runtime.InteropServices.Marshal]::SecureStringToBSTR($pass)
@@ -28,11 +30,6 @@ $cred = [pscredential]::new('administrator',(ConvertTo-SecureString -String '!Q2
 ([adsi]"WinNT://./Administrators,group").Add("WinNT://DOMAIN/grpname,group") #username,user
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "machineA,machineB" # "*"
 Invoke-WmiMethod -Class win32_process -name Create -ComputerName dflt -Credential $cred -ArgumentList "powershell.exe -noprofile -noninteractive -executionpolicy bypass -encodedCommand "
-
-# replace something in files
-gci path -Filter * -Recurse | % { ( gci $_.FullName | % { $_ -replace '','' } ) | sc $_.FullName }
-# get files older then x
-( gci -Recurse | ? { $_.LastWriteTime -gt (get-date).addyears(-5) } | Measure-Object -sum -Property Length ).sum/1gb
 
 # ssl stuff
 add-type @"
@@ -47,8 +44,3 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 }
 "@
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-# degen group-object
-$skips = { "streak": 3, "game": 940 }
-( $skips | Group-Object streak )[x].group.foreach{}
