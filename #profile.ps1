@@ -255,7 +255,7 @@ $env:FLUX_FORWARD_NAMESPACE = "flux"
 $env:KUBE_EDITOR = 'code --wait'
 $GitPromptSettings.DefaultPromptSuffix.Text = ""
 $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
-$GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\\Users\\core\\onedrive\\_git","~" )'
+$GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\\Users\\(core|_)\\onedrive\\_git","~" )'
 $GitPromptSettings.DefaultPromptAbbreviateGitDirectory = $true
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
 Set-PSReadLineOption -PredictionViewStyle ListView -PredictionSource History
