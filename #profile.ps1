@@ -73,13 +73,18 @@ function kns {
 }
 
 function istio-debug-me {
-  @'
-global.proxy.accessLogFile: "/dev/stdout"	
-global.proxy.accessLogFormat: ""
-global.proxy.accessLogEncoding: JSON
-'@
+  param(
+    [Parameter(Mandatory=$false)]
+    [ArgumentCompleter( { @( "admin","alternate_protocols_cache","aws","assert","backtrace","cache_filter","client","config","connection","conn_handler","decompression","dns","dubbo","envoy_bug","ext_authz","rocketmq","file","filter","forward_proxy","grpc","happy_eyeballs","hc","health_checker","http","http2","hystrix","init","io","jwt","kafka","key_value_store","lua","main","matcher","misc","mongo","quic","quic_stream","pool","rbac","redis","router","runtime","stats","secret","tap","testing","thrift","tracing","upstream","udp","wasm" -like $args[2] + '*') } )]
+    [string]$logger
+  )
+  if ( [string]::IsNullOrEmpty($logger) ) {
+    $log = "level"
+  } else {
+    $log = $logger
+  }
   $job = istio-gateway-pf-me
-  Invoke-RestMethod "http://localhost:15000/logging?level=debug" -Method:Post
+  Invoke-RestMethod "http://localhost:15000/logging?$log=debug" -Method:Post
   $job | Remove-Job -Force
 }
 
