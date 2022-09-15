@@ -5,7 +5,7 @@ New-Alias -Name ctj -Value ConvertTo-Json
 New-Alias -Name cfj -Value ConvertFrom-Json
 New-Alias -Name d -Value docker
 New-Alias -Name k -Value kubectl
-New-Alias -Name f -Value fluxctl
+New-Alias -Name f -Value flux
 New-Alias -Name i -Value istioctl
 
 Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -ScriptBlock {
@@ -256,7 +256,7 @@ function timestamp-me {
 Set-Location "$home\onedrive\_git"
 Import-Module posh-git
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$env:FLUX_FORWARD_NAMESPACE = "flux"
+$env:FLUX_FORWARD_NAMESPACE = "flux-system"
 $env:KUBE_EDITOR = 'code --wait'
 $GitPromptSettings.DefaultPromptSuffix.Text = ""
 $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
