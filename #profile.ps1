@@ -5,7 +5,6 @@ New-Alias -Name ctj -Value ConvertTo-Json
 New-Alias -Name cfj -Value ConvertFrom-Json
 New-Alias -Name d -Value docker
 New-Alias -Name k -Value kubectl
-New-Alias -Name h -Value helm
 New-Alias -Name f -Value flux
 New-Alias -Name i -Value istioctl
 
