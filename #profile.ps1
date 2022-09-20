@@ -253,7 +253,7 @@ function timestamp-me {
 }
 
 # miscellaneous
-Set-Location "$home\onedrive\_git"
+Set-Location "c:\_git\"
 Import-Module posh-git
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $env:FLUX_SYSTEM_NAMESPACE = "flux-system"
