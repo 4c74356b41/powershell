@@ -4,7 +4,7 @@ set-executionpolicy unrestricted
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco install -y kubernetes-cli kubernetes-helm stern bicep
 choco install -y git 7zip vscode telegram
-choco install -y slack istioctl fluxctl
+choco install -y slack istioctl flux
 choco install anydesk.portable --params="'/install'" -y
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
