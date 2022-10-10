@@ -72,6 +72,10 @@ function kns {
     kubectl config set-context (kubectl config current-context) --namespace $namespace
 }
 
+function get-k8s-api-deprecation {
+  (kubectl get --raw /metrics | sls '^apiserver_requested_deprecated_apis')[0]
+}
+
 function istio-debug-me {
   param(
     [Parameter(Mandatory=$false)]
