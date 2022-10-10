@@ -73,7 +73,7 @@ function kns {
 }
 
 function get-k8s-api-deprecation {
-  (kubectl get --raw /metrics | sls '^apiserver_requested_deprecated_apis')[0]
+  (kubectl get --raw /metrics | sls '^apiserver_requested_deprecated_apis')
 }
 
 function istio-debug-me {
