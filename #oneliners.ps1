@@ -11,7 +11,7 @@ choco install anydesk.portable --params="'/install'" -y
 Install-PackageProvider -Name NuGet
 Register-PSRepository -Default
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
-install-module posh-git,az,az.resourcegraph,az.websites,az.managedserviceidentity,psreadline
+install-module posh-git,az,az.resourcegraph,az.websites,az.managedserviceidentity,psreadline,microsoft.graph
 
 # https://docs.microsoft.com/en-us/windows/wsl/install-manual
 Enable-WindowsOptionalFeature -Online -FeatureName $("VirtualMachinePlatform", "Microsoft-Windows-Subsystem-Linux")
