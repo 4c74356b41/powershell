@@ -36,7 +36,7 @@ function dcr {
         [string]$localPath,
 	[string]$image = "ci"
     )
-    docker run -it -v ${home}\onedrive\_git\${localPath}:/ci $image
+    docker run -it -v c:\_git\${localPath}:/ci $image
 }
 
 # kubernetes
