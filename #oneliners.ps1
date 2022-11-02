@@ -25,6 +25,9 @@ git config --global core.autocrlf input
 # https://docs.microsoft.com/en-us/windows/terminal/customize-settings/interaction#word-delimiters
 (Get-PSReadlineOption).HistorySavePath
 
+[Environment]::SetEnvironmentVariable("FLUX_SYSTEM_NAMESPACE", "flux-system", "USER")
+[Environment]::SetEnvironmentVariable("KUBE_EDITOR", "code --wait", "USER")
+
 # misc
 $cred = [pscredential]::new('administrator',(ConvertTo-SecureString -String '!Q2w3e4r' -AsPlainText -Force))
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "machineA,machineB" # "*"
