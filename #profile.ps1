@@ -203,40 +203,13 @@ New-Alias -Name nrg -Value New-AzResourceGroup
 New-Alias -Name sld -Value New-AzDeployment
 New-Alias -Name rgd -Value New-AzResourceGroupDeployment
 
-function token-me {
-    $azProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
-    if ( -not $azProfile.Accounts.Count ) {
-        Throw "Ensure you have logged in before calling this function."    
-    }
-  
-    $profileClient = New-Object Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient( $azProfile )
-    $token = $profileClient.AcquireAccessToken( ( Get-AzContext ).Tenant.TenantId )
-
-    if ( -not $token.AccessToken ) {
-        Throw "No Token"
-    }
-    @{ Authorization = "Bearer {0}" -f $token.AccessToken }
-}
-
-function azure-ad-me {
-    $context = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile.DefaultContext
-    $aadToken = [Microsoft.Azure.Commands.Common.Authentication.AzureSession]::Instance.AuthenticationFactory.Authenticate(
-        $context.Account,
-	$context.Environment,
-	$context.Tenant.Id.ToString(),
-	$null,
-	[Microsoft.Azure.Commands.Common.Authentication.ShowDialog]::Never,
-	$null,
-	"https://graph.windows.net"
-    ).AccessToken
-    Connect-AzureAD -AadAccessToken $aadToken -AccountId $context.Account.Id -TenantId $context.tenant.id
-}
-
 function timestamp-me {
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
-        [string]$resourceId
+        [string]$resourceId,
+        [Parameter(Mandatory=$false)]
+        [string]$apiVersion = "2022-09-01"
     )
 
     $arr = $resourceId -split '/'
@@ -244,11 +217,9 @@ function timestamp-me {
     $resourceType = "{0}/{1}" -f $arr[6], $arr[7]
     $resourceName = $arr[-1]
 
-    $apiVersions = ( Get-AzResourceProvider -ProviderNamespace $arr[6] ).ResourceTypes
-    $apiVersion = $apiVersions.where{ $_.ResourceTypeName -eq $arr[7] }.ApiVersions | Select-Object -First 1
-
     $Uri = "https://management.azure.com/subscriptions/{0}/resources?`$filter=name eq '{1}' and resourceType eq '{2}'&`$expand=createdTime&api-version={3}"
-    $result = Invoke-RestMethod -Headers ( token-me ) -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
+    $response = Invoke-AzRest -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
+    $result = $response.Content | ConvertFrom-Json
 
     if( -not $result.value.createdTime ) {
        Throw "No 'CreatedTime' property"
@@ -259,9 +230,6 @@ function timestamp-me {
 # miscellaneous
 Set-Location "c:\_git\"
 Import-Module posh-git
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$env:FLUX_SYSTEM_NAMESPACE = "flux-system"
-$env:KUBE_EDITOR = 'code --wait'
 $GitPromptSettings.DefaultPromptSuffix.Text = ""
 $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
 $GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\\_git","#" )'
@@ -273,23 +241,6 @@ New-BashStyleAlias gpf 'git pull --ff-only @args'
 New-BashStyleAlias gfa 'git fetch --all --prune @args'
 New-BashStyleAlias gba 'git branch -a @args'
 New-BashStyleAlias gb 'git branch @args'
-
-function commit-me {
-    Param(
-        [Parameter(Mandatory = $true)]
-        [string]$workItemId,
-        [Parameter(Mandatory = $true)]
-        [string]$commitMessage,
-	[switch]$commitAll
-    )
-    $commitMessage = '#{0}: {1}' -f $workItemId, $commitMessage
-    if ( $commitAll.IsPresent ) {
-        git add -A
-    } else {
-        git add -u
-    }
-    git commit -m $commitMessage
-}
 
 function workhour-me ([int]$offset, $modifier = 1) {
     $now = Get-Date
