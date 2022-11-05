@@ -98,7 +98,7 @@ function istio-gateway-me ([switch]$internal) {
 }
 
 function istio-gateway-pf-me {
-  Start-Job -ScriptBlock { 
+  Start-Job -ScriptBlock {
     kubectl port-forward $args[0] --namespace istio-system 15000
   } -ArgumentList $( istio-gateway-me )
 }
@@ -130,7 +130,7 @@ function suspend-me ( $targetName, $targetType ) {
         containers:
         - name: $($targetJson.spec.template.spec.containers[0].name)
           command: ['sh','-c','sleep 10000s']" > $tempFile.FullName
-  
+
   kubectl patch $targetType $targetName -p ( Get-Content -Raw $tempFile.FullName )
   Remove-Item $tempFile
 }
@@ -158,9 +158,7 @@ function timestamp-me {
   $response = Invoke-AzRest -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
   $result = $response.Content | ConvertFrom-Json
 
-  if( -not $result.value.createdTime ) {
-      Throw "No 'CreatedTime' property"
-  }
+  if( -not $result.value.createdTime ) { Throw "No 'CreatedTime' property" }
   $result.value.createdTime
 }
 
@@ -197,10 +195,8 @@ function hosts-me {
 Start-Job -ScriptBlock {
   $temp = New-TemporaryFile
   Invoke-RestMethod "https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1" > $temp.FullName
-  $perm = Get-FileHash $profile
-  $temp = Get-FileHash $temp.FullName
-  if ( $perm.hash -ne $temp.hash ) {
-    Move-Item $temp.Fullname $profile
+  if ( ( Get-FileHash $profile ).hash -ne ( Get-FileHash $temp.FullName ).hash ) {
+    Move-Item $temp.Fullname $profile -Force
   }
 }
 
