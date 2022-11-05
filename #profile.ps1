@@ -193,11 +193,12 @@ function hosts-me {
 }
 
 Start-Job -ScriptBlock {
+  param ( $profilePath )
   $temp = New-TemporaryFile
   Invoke-RestMethod "https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1" > $temp.FullName
-  if ( ( Get-FileHash $profile ).hash -ne ( Get-FileHash $temp.FullName ).hash ) {
-    Move-Item $temp.Fullname $profile -Force
+  if ( ( Get-FileHash $profilePath ).hash -ne ( Get-FileHash $temp.FullName ).hash ) {
+    Move-Item $temp.Fullname $profilePath -Force
   }
-}
+} -ArgumentList $profile
 
 Clear-Host
