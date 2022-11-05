@@ -1,4 +1,3 @@
-# pwsh
 function debug-me() { Set-PSBreakpoint -Variable StackTrace -Mode Write }
 function copy-me( $name ) { New-Variable -Name $name -Value $lw.clone() -Scope Global }
 New-Alias -Name ctj -Value ConvertTo-Json
@@ -9,16 +8,16 @@ New-Alias -Name f -Value flux
 New-Alias -Name i -Value istioctl
 
 Set-PSReadLineKeyHandler -Chord 'Ctrl+a' -ScriptBlock {
-    param($key, $arg)
-    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(0)
+  param($key, $arg)
+  [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(0)
 }
 Set-PSReadLineKeyHandler -Chord 'Ctrl+e' -ScriptBlock {
-    param($key, $arg)
-    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(1000000)
+  param($key, $arg)
+  [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition(1000000)
 }
 function New-BashStyleAlias([string]$name, [string]$command) {
-    $sb = [scriptblock]::Create($command)
-    New-Item "Function:\global:$name" -Value $sb | Out-Null
+  $sb = [scriptblock]::Create($command)
+  New-Item "Function:\global:$name" -Value $sb | Out-Null
 }
 
 # docker
@@ -31,12 +30,12 @@ function dra() { docker rm $(docker ps -qa) }
 function dxi($image) { docker run --rm -it $image bash }
 function dxe($image) { docker run --rm -d --entrypoint '/bin/bash' $image -c 'sleep 1000000' }
 function dcr {
-    Param(
-        [Parameter(Mandatory=$true)]
-        [string]$localPath,
-	[string]$image = "ci"
-    )
-    docker run -it -v c:\_git\${localPath}:/ci $image
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$localPath,
+    [string]$image = "ci"
+  )
+  docker run -it -v c:\_git\${localPath}:/ci $image
 }
 
 # kubernetes
@@ -64,12 +63,12 @@ New-BashStyleAlias kga  'kubectl get --all-namespaces @args'
 New-BashStyleAlias kgaj 'kubectl get --all-namespaces -o json @args'
 New-BashStyleAlias kapi 'kubectl api-resources @args'
 function kns {
-    Param(
-        [Parameter(Mandatory = $true)]
-	[ArgumentCompleter( { @( (kubectl get namespaces -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
-        [string]$namespace
-    )
-    kubectl config set-context (kubectl config current-context) --namespace $namespace
+  Param(
+    [Parameter(Mandatory = $true)]
+    [ArgumentCompleter( { @( (kubectl get namespaces -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
+    [string]$namespace
+  )
+  kubectl config set-context (kubectl config current-context) --namespace $namespace
 }
 
 function get-k8s-api-deprecation {
@@ -92,14 +91,16 @@ function istio-debug-me {
   $job | Remove-Job -Force
 }
 
-function istio-gateway-me {
-  kubectl get pods --namespace istio-system --selector app=istio-ingressgateway -oname | Get-Random
+function istio-gateway-me ([switch]$internal) {
+  $selector = "istio=ingressgateway"
+  if ($internal) { $selector = "istio=ingressgateway-internal" }
+  kubectl get pods --namespace istio-system --selector $selector -oname | Get-Random
 }
 
 function istio-gateway-pf-me {
-    Start-Job -ScriptBlock { 
-      kubectl port-forward $args[0] --namespace istio-system 15000
-    } -ArgumentList $( istio-gateway-me )
+  Start-Job -ScriptBlock { 
+    kubectl port-forward $args[0] --namespace istio-system 15000
+  } -ArgumentList $( istio-gateway-me )
 }
 
 function istio-gateway-config-me {
@@ -113,89 +114,25 @@ function istio-gateway-log-me {
   kubectl logs $( istio-gateway-me ) -n istio-system -f --since=1s istio-proxy
 }
 
-function node-me {
-  param (
-    [Parameter(Mandatory)]
-    [ArgumentCompleter( { @( (kg no -o jsonpath='{.items[*].metadata.name}').Split() -like $args[2] + '*') } )]
-    [string]$nodeName,
-    [Parameter(Mandatory = $false)]
-    [string]$image = "docker.io/library/alpine",
-    [Parameter(Mandatory = $false)]
-    [string]$podName = "nsenter-$(Get-Random -Minimum 100000 -Maximum 999999)"
-  )
-
-  $tempFile = New-TemporaryFile
-  @"
-apiVersion: v1
-kind: Pod
-metadata:
-    name: $podName
-    namespace: default
-spec:
-    nodeName: $nodeName
-    hostPID: true
-    containers:
-    - securityContext: 
-        privileged: true
-      image: $image
-      name: nsenter
-      stdin: true
-      stdinOnce: true
-      tty: true
-      command:
-      - "nsenter"
-      - "--target"
-      - "1"
-      - "--mount"
-      - "--uts"
-      - "--ipc"
-      - "--net"
-      - "--pid"
-      - "--"
-      - "bash"
-      - "-l"
-"@ > $tempFile.FullName
-
-  kubectl apply -f $tempFile.FullName
-  # kubectl wait --for=condition=ready pod $podName
-  sleep 15
-  kubectl attach -n default $podName -it
-  kubectl delete pod -n default $podname
-  Remove-Item $tempFile.FullName
-}
-
-# https://gist.github.com/DzeryCZ/c4adf39d4a1a99ae6e594a183628eaee
-function helm-me ( $releaseName ) {
-    $tempFile = ( New-TemporaryFile ).FullName
-    $data = kubectl get secrets $releaseName -o jsonpath='{.data.release}'
-    [System.IO.File]::WriteAllLines($tempFile, $data, (New-Object System.Text.UTF8Encoding $False))
-
-    $dockerArgs = "run", "-it", "--rm", "--entrypoint", "bash", "-v", "${tempFile}:/raw", "debian:buster-slim", "-c", "base64 -d raw | base64 -d | gzip -d"
-    $content = docker $dockerArgs | Select-Object -Skip 1
-    ( $content | ConvertFrom-Json ).manifest
-    
-    Remove-Item $tempFile
-}
-
 function secret-me ( $secretName ) {
-    $secret = kubectl get secret -o json $secretName | ConvertFrom-Json
-    $secret.data.PSObject.Properties.foreach{
-        @{ $PSItem.Name = [System.Text.Encoding]::UTF8.GetString( [System.Convert]::FromBase64String( $PSItem.Value ) ) }
-    }
+  $secret = kubectl get secret -o json $secretName | ConvertFrom-Json
+  $secret.data.PSObject.Properties.foreach{
+      @{ $PSItem.Name = [System.Text.Encoding]::UTF8.GetString( [System.Convert]::FromBase64String( $PSItem.Value ) ) }
+  }
 }
 
 function suspend-me ( $targetName, $targetType ) {
-    $targetJson = kubectl get $targetType $targetName -o json | ConvertFrom-Json
-    $tempFile = New-TemporaryFile
-    "spec:
-      template:
-        spec:
-          containers:
-          - name: $($targetJson.spec.template.spec.containers[0].name)
-            command: ['sh','-c','sleep 10000s']" > $tempFile.FullName
-    
-    kubectl patch $targetType $targetName -p ( Get-Content -Raw $tempFile.FullName )
-    Remove-Item $tempFile
+  $targetJson = kubectl get $targetType $targetName -o json | ConvertFrom-Json
+  $tempFile = New-TemporaryFile
+  "spec:
+    template:
+      spec:
+        containers:
+        - name: $($targetJson.spec.template.spec.containers[0].name)
+          command: ['sh','-c','sleep 10000s']" > $tempFile.FullName
+  
+  kubectl patch $targetType $targetName -p ( Get-Content -Raw $tempFile.FullName )
+  Remove-Item $tempFile
 }
 
 # azure
@@ -204,34 +141,34 @@ New-Alias -Name sld -Value New-AzDeployment
 New-Alias -Name rgd -Value New-AzResourceGroupDeployment
 
 function timestamp-me {
-    [CmdletBinding()]
-    Param(
-        [Parameter(Mandatory=$true)]
-        [string]$resourceId,
-        [Parameter(Mandatory=$false)]
-        [string]$apiVersion = "2022-09-01"
-    )
+  [CmdletBinding()]
+  Param(
+    [Parameter(Mandatory=$true)]
+    [string]$resourceId,
+    [Parameter(Mandatory=$false)]
+    [string]$apiVersion = "2022-09-01"
+  )
 
-    $arr = $resourceId -split '/'
-    $subscriptionId = $arr[2]
-    $resourceType = "{0}/{1}" -f $arr[6], $arr[7]
-    $resourceName = $arr[-1]
+  $arr = $resourceId -split '/'
+  $subscriptionId = $arr[2]
+  $resourceType = "{0}/{1}" -f $arr[6], $arr[7]
+  $resourceName = $arr[-1]
 
-    $Uri = "https://management.azure.com/subscriptions/{0}/resources?`$filter=name eq '{1}' and resourceType eq '{2}'&`$expand=createdTime&api-version={3}"
-    $response = Invoke-AzRest -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
-    $result = $response.Content | ConvertFrom-Json
+  $Uri = "https://management.azure.com/subscriptions/{0}/resources?`$filter=name eq '{1}' and resourceType eq '{2}'&`$expand=createdTime&api-version={3}"
+  $response = Invoke-AzRest -Uri ( $uri -f $subscriptionId, $resourceName, $resourceType, $apiVersion )
+  $result = $response.Content | ConvertFrom-Json
 
-    if( -not $result.value.createdTime ) {
-       Throw "No 'CreatedTime' property"
-    }
-    $result.value.createdTime
+  if( -not $result.value.createdTime ) {
+      Throw "No 'CreatedTime' property"
+  }
+  $result.value.createdTime
 }
 
 # miscellaneous
 Set-Location "c:\_git\"
 Import-Module posh-git
 $GitPromptSettings.DefaultPromptSuffix.Text = ""
-$GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
+$GitPromptSettings.DefaultPromptBeforeSuffix.Text = ' [$(get-date -Format "hh:mm:ss dd-MM-yyyy")]`n'
 $GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\\_git","#" )'
 $GitPromptSettings.DefaultPromptAbbreviateGitDirectory = $true
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
@@ -242,21 +179,29 @@ New-BashStyleAlias gfa 'git fetch --all --prune @args'
 New-BashStyleAlias gba 'git branch -a @args'
 New-BashStyleAlias gb 'git branch @args'
 
-function workhour-me ([int]$offset, $modifier = 1) {
-    $now = Get-Date
-    $month = $now.Month + $offset
-    ( 1..[DateTime]::DaysInMonth( $now.Year, $month) ).where{
-        ( Get-Date -Day $_ -Month $month ).DayOfWeek -in 1..5 }.count * 8 * $modifier
+function workhour-me ([int]$offset, $hours = 8) {
+  $now = Get-Date
+  $month = $now.Month + $offset
+  ( 1..[DateTime]::DaysInMonth( $now.Year, $month) ).where{
+    ( Get-Date -Day $_ -Month $month ).DayOfWeek -in 1..5
+  }.count * $hours
 }
-function base64-file-me ($b64, $filename) {
-    if ( [string]::IsNullOrEmpty($filename) ) {
-        $filename = "b64.temp"
-    }
-    $bytes = [Convert]::FromBase64String($b64)
-    [IO.File]::WriteAllBytes("$pwd/$filename", $bytes)
+function base64-file-me ($b64, $filename = "b64.temp") {
+  $bytes = [Convert]::FromBase64String($b64)
+  [IO.File]::WriteAllBytes("$pwd/$filename", $bytes)
 }
 function hosts-me {
-    code C:\Windows\System32\drivers\etc\hosts
+  code C:\Windows\System32\drivers\etc\hosts
+}
+
+Start-Job -ScriptBlock {
+  $temp = New-TemporaryFile
+  Invoke-RestMethod "https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1" > $temp.FullName
+  $perm = Get-FileHash $profile
+  $temp = Get-FileHash $temp.FullName
+  if ( $perm.hash -ne $temp.hash ) {
+    Move-Item $temp.Fullname $profile
+  }
 }
 
 Clear-Host
