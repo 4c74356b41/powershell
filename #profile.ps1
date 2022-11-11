@@ -71,6 +71,16 @@ function kns {
   kubectl config set-context (kubectl config current-context) --namespace $namespace
 }
 
+function kdn {
+  Param(
+    [Parameter(Mandatory = $true)]
+    [ArgumentCompleter( { @( (kubectl get node -oname).Split() -like $args[2] + '*') } )]
+    [string]$node,
+    [string]$image = "busybox"
+  )
+  kubectl debug -it $node --image=$image
+}
+
 function get-k8s-api-deprecation {
   (kubectl get --raw /metrics | sls '^apiserver_requested_deprecated_apis')
 }
