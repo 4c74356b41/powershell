@@ -81,6 +81,17 @@ function kdn {
   kubectl debug -it $node --image=$image
 }
 
+function helm-me ($helmRelease) {
+  $namespace = kubectl config view --minify -o jsonpath='{..namespace}'
+  $resources = helm get manifest $helmRelease | k apply -f - --dry-run=client
+  $resources.foreach{
+    $res = $_.Split() | Select -First 1
+    kubectl label $res app.kubernetes.io/managed-by=Helm
+    kubectl annotate $res meta.helm.sh/release-name=$helmRelease
+    kubectl annotate $res meta.helm.sh/release-namespace=$namespace
+  }
+}
+
 function get-k8s-api-deprecation {
   (kubectl get --raw /metrics | sls '^apiserver_requested_deprecated_apis')
 }
