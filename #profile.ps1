@@ -217,7 +217,7 @@ Start-Job -ScriptBlock {
   param ( $profilePath )
   $temp = New-TemporaryFile
   Invoke-RestMethod "https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1" -ErrorAction Stop > $temp.FullName
-  if ( ( Get-FileHash $profilePath ).hash -ne ( Get-FileHash $temp.FullName ).hash ) {
+  if ( [string]::IsNullOrEmpty( Get-Content -Raw $temp.FullName ) -and ( Get-FileHash $profilePath ).hash -ne ( Get-FileHash $temp.FullName ).hash ) {
     Move-Item $temp.Fullname $profilePath -Force
   }
 } -ArgumentList $profile
