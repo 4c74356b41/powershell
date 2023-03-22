@@ -33,9 +33,10 @@ function dcr {
   Param(
     [Parameter(Mandatory=$true)]
     [string]$localPath,
-    [string]$image = "ci"
+    [string]$image = "ci",
+    [string]$entryPoint = "/bin/bash"
   )
-  docker run -it -v c:\_git\${localPath}:/ci $image
+  docker run -it --entrypoint=$entryPoint -v c:\_git\${localPath}:/ci $image
 }
 
 # kubernetes
