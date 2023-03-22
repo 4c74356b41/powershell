@@ -34,9 +34,10 @@ function dcr {
     [Parameter(Mandatory=$true)]
     [string]$localPath,
     [string]$image = "ci",
-    [string]$entryPoint = "/bin/bash"
+    [string]$entryPoint = "/bin/bash",
+    [string]$port = "3000"
   )
-  docker run -it --entrypoint=$entryPoint -v c:\_git\${localPath}:/ci $image
+  docker run -it --entrypoint=$entryPoint -p ${port}:${port} -v c:\_git\${localPath}:/ci $image
 }
 
 # kubernetes
