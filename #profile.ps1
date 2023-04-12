@@ -222,6 +222,7 @@ Start-Job -ScriptBlock {
   Invoke-RestMethod "https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1" -ErrorAction Stop > $tempFile
   if ( -not [string]::IsNullOrEmpty( ( Get-Content -Raw $tempFile ) ) 
        -and ( Get-FileHash $profilePath ).hash -ne ( Get-FileHash $tempFile ).hash ) {
+    "update!"
     Move-Item $tempFile $profilePath -Force
   }
 } -ArgumentList $profile
