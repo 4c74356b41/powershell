@@ -195,6 +195,7 @@ $GitPromptSettings.DefaultPromptPath.Text = '$( ( Get-PromptPath ) -replace "C:\
 $GitPromptSettings.DefaultPromptAbbreviateGitDirectory = $true
 $PSDefaultParameterValues["Out-Default:OutVariable"] = "lw"
 Set-PSReadLineOption -PredictionViewStyle ListView -PredictionSource History
+New-BashStyleAlias gtp 'git commit -am typo; git push'
 New-BashStyleAlias gtc 'git commit -am @args'
 New-BashStyleAlias gpf 'git pull --ff-only @args'
 New-BashStyleAlias gfa 'git fetch --all --prune @args'
