@@ -21,6 +21,7 @@ git config --global user.email "core@4c74356b41.com"
 git config --global user.name "Gleb Boushev"
 git config --global core.eol lf
 git config --global core.autocrlf input
+git config --global --add --bool push.autoSetupRemote true
 'Invoke-Expression (New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/4c74356b41/powershell/master/%23profile.ps1")' > $profile
 # https://docs.microsoft.com/en-us/windows/terminal/customize-settings/interaction#word-delimiters
 (Get-PSReadlineOption).HistorySavePath
