@@ -201,6 +201,11 @@ New-BashStyleAlias gpf 'git pull --ff-only @args'
 New-BashStyleAlias gfa 'git fetch --all --prune @args'
 New-BashStyleAlias gba 'git branch -a @args'
 New-BashStyleAlias gb 'git branch @args'
+function delete-gharuns ([string]$workflow) {
+  gh run list -w $workflow --json url -q '.[].url' | % {
+      gh run delete $($_.split('/') | Select-Object -Last 1)
+    }
+}
 
 function workhour-me ([int]$offset, $hours = 8) {
   $now = Get-Date
