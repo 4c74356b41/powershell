@@ -1,6 +1,6 @@
 # delete PSREADLINE module first
 # initial setup
-set-executionpolicy unrestricted
+Set-ExecutionPolicy Bypass -Scope Process -Force
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 choco install -y kubernetes-cli kubernetes-helm stern bicep
