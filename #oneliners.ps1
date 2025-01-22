@@ -2,11 +2,13 @@
 # initial setup
 Set-ExecutionPolicy Bypass -Scope Process -Force
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install -y kubernetes-cli kubernetes-helm stern bicep
-choco install -y git 7zip vscode telegram
-choco install -y slack istioctl flux gh
-choco install anydesk.portable --params="'/install'" -y
+winget install 7zip.7zip, GitHub.cli, Microsoft.AzureCLI, Microsoft.VisualStudioCode, Git.Git
+winget install Telegram.TelegramDesktop, 9NKSQGP7F2NH, 9WZDNCRDK3WP # wa\slack
+winget install Kubernetes.kubectl, Helm.Helm, FluxCD.Flux, Microsoft.Bicep
+# choco install -y kubernetes-cli kubernetes-helm stern bicep
+# choco install -y git 7zip vscode telegram
+# choco install -y slack istioctl flux gh
+# choco install anydesk.portable --params="'/install'" -y
 
 Install-PackageProvider -Name NuGet
 Register-PSRepository -Default
