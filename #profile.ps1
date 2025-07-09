@@ -214,9 +214,12 @@ function workhour-me ([int]$offset, $hours = 8) {
     ( Get-Date -Day $_ -Month $month ).DayOfWeek -in 1..5
   }.count * $hours
 }
-function base64-file-me ($b64, $filename = "b64.temp") {
+function base64-file-me ($b64, $filename = "b64.temp", $print = $true) {
   $bytes = [Convert]::FromBase64String($b64)
   [IO.File]::WriteAllBytes("$pwd/$filename", $bytes)
+  if ($print) {
+    [System.Text.Encoding]::UTF8.GetString($bytes)
+  }
 }
 function hosts-me {
   code C:\Windows\System32\drivers\etc\hosts
